@@ -6,18 +6,16 @@ import Music from './Music';
 import Movie from './Movie';
 import Playlist from './Playlist';
 import Downloads from './Downloads';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-//#3498db
-
-const AppTabNavigator = createBottomTabNavigator({
+const AppTabNavigator = createMaterialTopTabNavigator({
     Music: {
         screen: Music,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"music"} size={focused ? 25 : 18} color={focused ? "#F89424" : "#999"} />
+                return <Icon name={"music"} size={25} color={focused ? 'black' : "white"} />
             },
             tabBarLabel: "Músicas"
         })
@@ -26,7 +24,7 @@ const AppTabNavigator = createBottomTabNavigator({
         screen: Movie,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"film"} size={focused ? 25 : 18} color={focused ? "#F89424" : "#999"} />
+                return <Icon name={"film"} size={22} color={focused ? "black" : "white"} />
             },
             tabBarLabel: "Videos"
         })
@@ -35,34 +33,27 @@ const AppTabNavigator = createBottomTabNavigator({
         screen: Playlist,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"list"} size={focused ? 25 : 18} color={focused ? "#F89424" : "#999"} />
+                return <Icon name={"list"} size={25} color={focused ? "black" : "white"} />
             },
-            tabBarLabel: "Lista de Reprodução"
+            tabBarLabel: "Listas"
         })
     },
     Downloads: {
         screen: Downloads,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"download"} size={focused ? 25 : 18} color={focused ? "#F89424" : "#999"} />
+                return <Icon name={"download"} size={25} color={focused ? "black" : "white"} />
             }
-        })
-    },
-    Config: {
-        screen: "Config",
-        navigationOptions: ({ navigation }) => ({
-            tabBarOnPress: () => {
-                navigation.openDrawer();
-            },
-            tabBarLabel: "Configurações",
-            tabBarIcon: <Icon name={"gear"} size={18} color={"#999"} />
         })
     }
 }, {
     tabBarOptions: {
-        activeTintColor: 'orange',
-        labelStyle: ({ fontSize: 13 }),
-        tabStyle: ({ backgroundColor: 'black', paddingBottom: 5, paddingTop: 5 }),
+        upperCaseLabel: false,
+        showIcon: true,
+        keyboardHidesTabBar: false,
+        activeTintColor: 'black',
+        labelStyle: ({ fontSize: 13, marginTop: 0 }),
+        tabStyle: ({ backgroundColor: "#F89424", padding: 0 })
     },
 });
 
@@ -71,11 +62,16 @@ const AppStackNavigator = createStackNavigator({
         screen: AppTabNavigator,
         navigationOptions: ({ navigation }) => ({
             header: (
-                <TextInput 
-                    style={{ backgroundColor: "#F89424", color: "white", fontSize: 18, paddingLeft: 25, height: 50 }}
-                    placeholder={"Músicas"} 
-                    placeholderTextColor={"white"} 
-                />
+                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: "#F89424" }}>
+                    <View style={{ flex: 1 }}>
+                        <TextInput 
+                            style={{ backgroundColor: "#F89424", color: "white", fontSize: 18, paddingLeft: 20, height: 50 }}
+                            placeholder={"Músicas"} 
+                            placeholderTextColor={"white"} 
+                        />
+                    </View>
+                    <Icon name={"navicon"} onPress={() => navigation.openDrawer()} style={{ marginRight: 15 }} size={30} color={"white"} />
+                </View>
             )
         })
     }
