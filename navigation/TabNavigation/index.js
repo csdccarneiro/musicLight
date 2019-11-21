@@ -77,5 +77,4 @@ const AppStackNavigator = createStackNavigator({
     }
 });
 
-
 export default AppStackNavigator;

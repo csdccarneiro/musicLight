@@ -1,55 +1,48 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Picker } from 'react-native';
-import { Avatar } from 'react-native-elements';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
-export default function ItemList(props){
-    return (
-      <View style={styles.itemContainer} >
-          { (String(props.cover).indexOf('.jpg') >= 0) ? <Avatar size={"small"} containerStyle={{ marginLeft: 5 }} source={{ uri: props.cover }} /> : 
-          <Avatar icon={{ name: 'music', type: 'font-awesome', color: 'red', size: 30 }} containerStyle={{ marginLeft: 5 }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"small"} />}
-          <TouchableOpacity onLongPress={props.onLongPressItem} style={styles.itemButton} onPress={props.onPressItem} >
-              <Text style={styles.itemTitle} numberOfLines={1}>{props.title}</Text>
-              <Text style={styles.itemSubtitle} numberOfLines={1}>{props.subtitle}</Text>
+export default function ItemList(props) {
+    return(
+      <View style={style.itemContainer}>
+          <FastImage
+              style={{ width: 45, height: 45, marginLeft: 5 }}
+              source={(String(props.cover).indexOf('.jpg') >= 0) ? 
+              {
+                uri: props.cover, 
+                headers: { Authorization: 'someAuthToken' },
+                priority: FastImage.priority.high,
+                cache: "immutable"
+              }: require('../../images/musical-note.png')}
+              resizeMode={FastImage.resizeMode.cover}
+          />
+          <TouchableOpacity onPress={props.onPress} style={{ flex: 1, marginLeft: 10 }}>
+              <Text numberOfLines={1} style={style.itemTitle} >{props.title}</Text>
+              <Text numberOfLines={1} style={style.itemSubtitle}>{props.subtitle}</Text>
           </TouchableOpacity>
-          <View style={styles.itemPicker}>
-            <Picker
-                mode={'dropdown'}
-                style={{ margin: -10 }}
-                onValueChange={(itemValue, itemIndex) => alert(itemValue)}>
-                <Picker.Item label="Adicionar Lista de Reprodução" value="1" />
-                <Picker.Item label="Compartilhar" value="2" />
-                <Picker.Item label="Excluir" value="3" />
-            </Picker>
-          </View>
-      </View>  
-    );
+          <TouchableOpacity onPress={props.onOptionPress}>
+              <FastImage
+                style={{ width: 20, height: 20, margin: 3, borderRadius: 10 }}
+                source={require('../../images/ellipsis.png')}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+          </TouchableOpacity>
+      </View>
+    )
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
     itemContainer: {
-      borderTopWidth: 0.5, 
-      flexDirection: "row", 
-      flex: 1, 
-      paddingTop: 5, 
-      paddingBottom: 5
-    },
-    itemButton: {
-      flexDirection: "column", 
-      flex: 1,
+      borderBottomWidth: 0.5, 
+      flexDirection: 'row', 
+      alignItems: 'center', 
+      padding: 2
     },
     itemTitle: {
-      fontSize: 13, 
-      fontWeight: 'bold',
-      paddingLeft: 5, 
-      paddingRight: 5
+      fontSize: 15,
+      fontWeight: 'bold'
     },
     itemSubtitle: {
-      fontSize: 11,
-      paddingLeft: 5, 
-      paddingRight: 5
-    },
-    itemPicker: {
-      flex: 0.1,
-      justifyContent: 'center'
+      fontSize: 13
     }
 });

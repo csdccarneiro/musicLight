@@ -1,67 +1,72 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Image, Picker } from 'react-native';
-import { Avatar } from 'react-native-elements';
+import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import FastImage from 'react-native-fast-image';
 
 export default function ItemCard(props){
     return(
         <View style={[style.itemContainer, { width: props.width }]}>
-            <TouchableOpacity style={{ alignItems: 'center' }}>
-                { (String(props.cover).indexOf('.jpg') >= 0) ? <Image style={[style.itemImage, { height: 120 - (props.height - 10) }]} source={{ uri: props.cover }} />
-                : <Avatar icon={{ name: 'music', type: 'font-awesome', color: 'red', size: 120 - (props.height - 10) }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={120 - (props.height - 10)} />}
+            <TouchableOpacity onPress={props.onPress} onLongPress={() => alert("Testando")}>
+                <FastImage
+                    style={{ width: props.width, height: 120  }}
+                    source={(String(props.cover).indexOf('.jpg') >= 0) ? 
+                        {
+                            uri: props.cover, 
+                            headers: { Authorization: 'someAuthToken' },
+                            priority: FastImage.priority.high,
+                            cache: "immutable"
+                        }: require('../../images/musical-note.png')}
+                    resizeMode={FastImage.resizeMode.cover}
+                />
             </TouchableOpacity>
             <View style={style.itemContainerText}>
-                <View style={{ flexDirection: 'column', flex: 1 }}>
-                    <Text numberOfLines={1} style={style.itemTitle}>{props.title} </Text>
-                    <Text numberOfLines={1} style={style.itemSubtitle}>{props.subtitle}</Text>
+                <View style={style.itemText}>
+                    <Text style={style.itemTitle} numberOfLines={1}>{props.title}</Text>
+                    <Text style={style.itemSubtitle} numberOfLines={1}>{props.subtitle}</Text>
                 </View>
-                <View style={style.itemPicker}>
-                    <Picker
-                        mode={'dropdown'}
-                        style={{ margin: -10 }}
-                        onValueChange={(itemValue, itemIndex) => alert(itemValue)}>
-                        <Picker.Item label="Adicionar Lista de Reprodução" value="1" />
-                        <Picker.Item label="Compartilhar" value="2" />
-                        <Picker.Item label="Excluir" value="3" />
-                    </Picker>
+                <View style={style.itemIcon}> 
+                    <TouchableOpacity onPress={props.onOptionPress}>
+                        <FastImage
+                            style={{ width: 30, height: 20, margin: 3 }}
+                            source={require('../../images/ellipsis.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                        />
+                    </TouchableOpacity>
                 </View>
             </View>
-        </View>  
+        </View>
     );
 }
 
 const style = StyleSheet.create({
     itemContainer: {
-        flexDirection: 'column', 
+        elevation: 5, 
+        borderRadius: 5, 
+        backgroundColor: "#F2F2F2",  
         borderWidth: 0.2, 
+        margin: 3,
         borderColor: 'black', 
+        alignItems: 'center',
         overflow: 'hidden',
-        borderRadius: 5,
-        elevation: 3,
-        backgroundColor: "#F2F2F2",
-        margin: 3
-    },
-    itemImage: {
-        width: '100%',
-        resizeMode: 'cover'
+        paddingBottom: 3
     },
     itemContainerText: {
-        paddingLeft: 5, 
-        paddingTop: 5,
-        paddingBottom: 5,
         flexDirection: 'row' 
     },
     itemTitle: {
-        fontSize: 13,
-        fontWeight: 'bold',
-        textAlign: 'justify'
+        fontWeight: 'bold', 
+        fontSize: 15
     },
     itemSubtitle: {
-        fontSize: 11,
-        textAlign: 'justify'
+        fontSize: 11
     },
-    itemPicker: {
-        flex: 0.3, 
+    itemText: {
         flexDirection: 'column', 
+        flex: 1,
+        paddingLeft: 5
+    },
+    itemIcon: {
+        margin: -8, 
         justifyContent: 'center'
     }
 });
+
