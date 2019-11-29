@@ -2,12 +2,12 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
-export default function ItemCard(props){
-    return(
-        <View style={[style.itemContainer, { width: props.width }]}>
-            <TouchableOpacity onPress={props.onPress} onLongPress={() => alert("Testando")}>
+export default function ItemCard(props) {
+    return (
+        <View style={[style.itemContainer, { width: props.width, backgroundColor: (props.isSelect ? "#C7C7C7" : "#F2F2F2") }]}>
+            <TouchableOpacity onPress={props.onPress} onLongPress={props.onLongPressItem}>
                 <FastImage
-                    style={{ width: props.width, height: 120  }}
+                    style={{ width: props.width, height: 120 }}
                     source={(String(props.cover).indexOf('.jpg') >= 0) ? 
                         {
                             uri: props.cover, 
@@ -40,8 +40,7 @@ export default function ItemCard(props){
 const style = StyleSheet.create({
     itemContainer: {
         elevation: 5, 
-        borderRadius: 5, 
-        backgroundColor: "#F2F2F2",  
+        borderRadius: 5,  
         borderWidth: 0.2, 
         margin: 3,
         borderColor: 'black', 

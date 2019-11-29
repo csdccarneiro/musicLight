@@ -4,7 +4,7 @@ import FastImage from 'react-native-fast-image';
 
 export default function ItemList(props) {
     return(
-      <View style={style.itemContainer}>
+      <View style={[style.itemContainer, { backgroundColor: (props.isSelect ? "#C7C7C7" : "#F2F2F2") }]}>
           <FastImage
               style={{ width: 45, height: 45, marginLeft: 5 }}
               source={(String(props.cover).indexOf('.jpg') >= 0) ? 
@@ -16,7 +16,7 @@ export default function ItemList(props) {
               }: require('../../images/musical-note.png')}
               resizeMode={FastImage.resizeMode.cover}
           />
-          <TouchableOpacity onPress={props.onPress} style={{ flex: 1, marginLeft: 10 }}>
+          <TouchableOpacity onPress={props.onPress} style={{ flex: 1, marginLeft: 10 }} onLongPress={props.onLongPressItem}>
               <Text numberOfLines={1} style={style.itemTitle} >{props.title}</Text>
               <Text numberOfLines={1} style={style.itemSubtitle}>{props.subtitle}</Text>
           </TouchableOpacity>

@@ -4,7 +4,6 @@ import { Avatar, Slider } from 'react-native-elements';
 import FastImage from 'react-native-fast-image';
 import { useTrackPlayerProgress, useTrackPlayerEvents, TrackPlayerEvents, skipToNext, skipToPrevious, play, pause, seekTo, getState, STATE_PLAYING, STATE_PAUSED, getCurrentTrack, getTrack } from 'react-native-track-player';
 
-
 export default function PlayerArea(props){
     const { position, bufferedPosition, duration } = useTrackPlayerProgress();
     const [iconPlayer, setIconPlayer] = useState("play");
@@ -55,9 +54,9 @@ export default function PlayerArea(props){
 
     return (
         <Animated.View style={[style.playerContainer, { height: props.header }]}>
-            <View style={style.playerContainerCover}>
+            <View>
                 <FastImage
-                    style={{ width: 45, height: 45, marginLeft: 10 }}
+                    style={{ width: 55, height: 55, marginLeft: 10 }}
                     source={(String(track.artwork).indexOf('.jpg') >= 0) ? 
                     {
                         uri: track.artwork, 
@@ -77,49 +76,55 @@ export default function PlayerArea(props){
                     <Avatar icon={{ name: 'random', type: 'font-awesome', color: '#C7C7C7', size: 25 }} overlayContainerStyle={style.coverStyle} size={"medium"} />
                 </View>
                 <View style={style.playerTime}>
-                    <Text style={style.playerText} >{formatTime(position)}</Text>
+                    <Text style={style.colorText}>{formatTime(position)}</Text>
                     <Slider style={style.playerSlider} animateTransitions={true} animationType={'spring'} value={position} onValueChange ={ value => { seekTo(value) }} maximumValue={duration} trackStyle={{ height: 3 }} thumbStyle={{ height: 13, width: 13 }} />
-                    <Text style={style.playerText} >{formatTime(duration)}</Text>
+                    <Text style={style.colorText}>{formatTime(duration)}</Text>
                 </View>
-            </View>
+                <View style={style.playerContainerTrack}>
+                    <Text numberOfLines={1} style={style.colorText}>{String(track.fileName).split('.')[0]}</Text>    
+                </View>
+            </View> 
         </Animated.View>
     );
 }
 
-
 const style = StyleSheet.create({
     playerContainer: {
         backgroundColor: 'black', 
-        flexDirection: 'row'
-    },
-    playerContainerCover: {
-        justifyContent: 'center', 
+        flexDirection: 'row', 
+        alignItems: 'center', 
         overflow: 'hidden'
     },
     playerContainerControllers: {
-        flex: 1, 
+        flex: 1,
         flexDirection: 'column',
-        paddingTop: 5 
+        justifyContent: 'center'
     },
     playerContainerIcons: {
         flexDirection: 'row', 
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly', 
+        alignItems: 'center'
     },
     playerTime: {
         flexDirection: 'row', 
-        paddingLeft: 20, 
-        paddingRight: 20
-    },
-    playerText: {
-        color: 'white',
-        textAlign: 'center'
+        marginLeft: 10, 
+        marginRight: 10
     },
     playerSlider: {
         flex: 1, 
         marginTop: -10, 
-        marginBottom: -7, 
+        marginBottom: -15, 
         marginLeft: 5, 
         marginRight: 5
+    },
+    playerContainerTrack: {
+        flexDirection: 'row', 
+        justifyContent: 'center', 
+        marginLeft: 25, 
+        marginRight: 25
+    },
+    colorText: {
+        color: 'white'
     },
     coverStyle: {
         backgroundColor: 'transparent',
