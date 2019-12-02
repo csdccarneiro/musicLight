@@ -1,21 +1,21 @@
 
 import React from 'react';
 import { View, TextInput } from 'react-native';
+import { Avatar } from 'react-native-elements';
+import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
+import { createStackNavigator } from 'react-navigation-stack';
 //IMPORTANDO TAB PAGES 
 import Music from './Music';
 import Movie from './Movie';
 import Playlist from './Playlist';
 import Downloads from './Downloads';
-import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
-import { createStackNavigator } from 'react-navigation-stack';
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 const AppTabNavigator = createMaterialTopTabNavigator({
     Music: {
         screen: Music,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"music"} size={25} color={focused ? 'black' : "white"} />
+                return <Avatar icon={{ name: 'music', size: 25, color: (focused ? 'black' : "white"), type: 'font-awesome' }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={25} />
             },
             tabBarLabel: "Músicas"
         })
@@ -24,7 +24,7 @@ const AppTabNavigator = createMaterialTopTabNavigator({
         screen: Movie,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"film"} size={22} color={focused ? "black" : "white"} />
+                return <Avatar icon={{ name: 'film', size: 22, color: (focused ? 'black' : "white"), type: 'font-awesome' }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={25} />
             },
             tabBarLabel: "Videos"
         })
@@ -33,7 +33,7 @@ const AppTabNavigator = createMaterialTopTabNavigator({
         screen: Playlist,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"list"} size={25} color={focused ? "black" : "white"} />
+                return <Avatar icon={{ name: 'list', size: 25, color: (focused ? 'black' : "white"), type: 'font-awesome' }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={25} />
             },
             tabBarLabel: "Listas"
         })
@@ -42,7 +42,7 @@ const AppTabNavigator = createMaterialTopTabNavigator({
         screen: Downloads,
         navigationOptions: ({ navigation }) => ({
             tabBarIcon: ({ focused }) => {
-                return <Icon name={"download"} size={25} color={focused ? "black" : "white"} />
+                return <Avatar icon={{ name: 'download', size: 25, color: (focused ? 'black' : "white"), type: 'font-awesome' }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={25} />
             }
         })
     }
@@ -70,7 +70,7 @@ const AppStackNavigator = createStackNavigator({
                             placeholderTextColor={"white"} 
                         />
                     </View>
-                    <Icon name={"navicon"} onPress={() => navigation.openDrawer()} style={{ marginRight: 15 }} size={30} color={"white"} />
+                    <Avatar icon={{ name: 'navicon', size: 30, color: 'white', type: 'font-awesome' }} onPress={() => navigation.openDrawer()} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
                 </View>
             )
         })

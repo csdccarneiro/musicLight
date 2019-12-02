@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import FastImage from 'react-native-fast-image';
 
+
 export default function ItemCard(props) {
     return (
         <View style={[style.itemContainer, { width: props.width, backgroundColor: (props.isSelect ? "#C7C7C7" : "#F2F2F2") }]}>
@@ -23,6 +24,26 @@ export default function ItemCard(props) {
                     <Text style={style.itemTitle} numberOfLines={1}>{props.title}</Text>
                     <Text style={style.itemSubtitle} numberOfLines={1}>{props.subtitle}</Text>
                 </View>
+                <View style={style.itemIcon}>
+                    <TouchableOpacity onPress={props.onOptionPress}>
+                        {
+                            (props.listSelection.size == 0) ? 
+                                <FastImage
+                                    style={{ width: 20, height: 20 }}
+                                    source={require('../../images/ellipsis.png')}
+                                    resizeMode={FastImage.resizeMode.contain}
+                                /> :
+                            <>
+                            </> 
+                        }
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    );
+}
+
+/*
                 <View style={style.itemIcon}> 
                     <TouchableOpacity onPress={props.onOptionPress}>
                         <FastImage
@@ -32,10 +53,7 @@ export default function ItemCard(props) {
                         />
                     </TouchableOpacity>
                 </View>
-            </View>
-        </View>
-    );
-}
+*/
 
 const style = StyleSheet.create({
     itemContainer: {
@@ -64,7 +82,7 @@ const style = StyleSheet.create({
         paddingLeft: 5
     },
     itemIcon: {
-        margin: -8, 
+        width: 20, 
         justifyContent: 'center'
     }
 });

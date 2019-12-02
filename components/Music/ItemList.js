@@ -20,23 +20,30 @@ export default function ItemList(props) {
               <Text numberOfLines={1} style={style.itemTitle} >{props.title}</Text>
               <Text numberOfLines={1} style={style.itemSubtitle}>{props.subtitle}</Text>
           </TouchableOpacity>
-          <TouchableOpacity onPress={props.onOptionPress}>
-              <FastImage
-                style={{ width: 20, height: 20, margin: 3, borderRadius: 10 }}
-                source={require('../../images/ellipsis.png')}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-          </TouchableOpacity>
+          <View style={{ width: 30 }}>
+              <TouchableOpacity onPress={props.onOptionPress}>
+                  {
+                      (props.listSelection.size == 0) ? 
+                          <FastImage
+                              style={{ width: 20, height: 20, margin: 3, borderRadius: 10 }}
+                              source={require('../../images/ellipsis.png')}
+                              resizeMode={FastImage.resizeMode.contain}
+                          /> :
+                      <>
+                      </> 
+                  }
+              </TouchableOpacity>
+          </View>
       </View>
     )
 }
 
 const style = StyleSheet.create({
     itemContainer: {
-      borderBottomWidth: 0.5, 
+      borderTopWidth: 0.5, 
       flexDirection: 'row', 
       alignItems: 'center', 
-      padding: 2
+      padding: 2,
     },
     itemTitle: {
       fontSize: 15,
