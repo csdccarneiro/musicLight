@@ -4,11 +4,13 @@ import { View, TextInput } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
+import { useSelector, useDispatch } from 'react-redux';
 //IMPORTANDO TAB PAGES 
 import Music from './Music';
 import Movie from './Movie';
 import Playlist from './Playlist';
 import Downloads from './Downloads';
+
 
 const AppTabNavigator = createMaterialTopTabNavigator({
     Music: {
@@ -54,25 +56,38 @@ const AppTabNavigator = createMaterialTopTabNavigator({
         activeTintColor: 'black',
         labelStyle: ({ fontSize: 13, marginTop: 0 }),
         tabStyle: ({ backgroundColor: "#F89424", padding: 0 })
-    },
+    }
 });
+
+const HeaderFull = ({navigation}) => {
+    const dispatch = useDispatch();
+    const music = useSelector(state => state.page_music); 
+    return (
+        <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: "#F89424" }}>
+            <View style={{ flex: 1 }}>
+                <TextInput 
+                    style={{ backgroundColor: "#F89424", color: "white", fontSize: 18, paddingLeft: 20, height: 50 }}
+                    placeholder={"Músicas"} 
+                    placeholderTextColor={"white"}
+                    onSubmitEditing={(event) => {
+                        if (event.nativeEvent.text != ""){ 
+                            dispatch({ type: "SEARCH_MUSIC", searchMusic: event.nativeEvent.text, listSearchMusic: music.searchMusic });
+                        }    
+                    }}
+                    onChangeText={(text) => { if(text == "") dispatch({ type: "LOADED_LIST_MUSIC", searchMusic: music.searchMusic, listMusic: music.listMusic }) }}
+             
+                />
+            </View>
+            <Avatar icon={{ name: 'navicon', size: 30, color: 'white', type: 'font-awesome' }} onPress={() => navigation.openDrawer()} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
+        </View>
+    );
+}
 
 const AppStackNavigator = createStackNavigator({
     AppTabNavigator: {
         screen: AppTabNavigator,
         navigationOptions: ({ navigation }) => ({
-            header: (
-                <View style={{ flexDirection: 'row', alignItems: 'center', backgroundColor: "#F89424" }}>
-                    <View style={{ flex: 1 }}>
-                        <TextInput 
-                            style={{ backgroundColor: "#F89424", color: "white", fontSize: 18, paddingLeft: 20, height: 50 }}
-                            placeholder={"Músicas"} 
-                            placeholderTextColor={"white"} 
-                        />
-                    </View>
-                    <Avatar icon={{ name: 'navicon', size: 30, color: 'white', type: 'font-awesome' }} onPress={() => navigation.openDrawer()} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
-                </View>
-            )
+            header: <HeaderFull navigation={navigation} />
         })
     }
 });

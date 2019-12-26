@@ -1,15 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, Dimensions, Animated, Easing, DeviceEventEmitter, StyleSheet, Text, TouchableHighlight, Modal, RefreshControl } from 'react-native';
+import { View, Dimensions, Alert, Animated, Easing, BackHandler, DeviceEventEmitter, StyleSheet, Text, TouchableHighlight, Modal, RefreshControl } from 'react-native';
 import { Avatar } from 'react-native-elements';
+import { useSelector, useDispatch } from 'react-redux';
 import { ItemCard, ItemList, PlayerArea } from '../../../components';
-import controller from '../../../controller';
 
 export default function Music({ navigation }) {
 
-    const [ listMusic, setListMusic ] = useState([]);
-    const [selected, setSelected] = useState(new Map());
+    const dispatch = useDispatch();
+    const music = useSelector(state => state.page_music); 
     const [ itemOptions, setItemOptions ] = useState({ path: new Map(), modalVisible: false });
-    const [ refreshList, setRefreshList ] = useState(false);
 
     const { width, height } = Dimensions.get('window');  
     const widthItem = (width - 20) / 3;
@@ -18,59 +17,50 @@ export default function Music({ navigation }) {
     //EFEITO INTERPOLADO
     const headerHeight = scrollY.interpolate({
         easing: Easing.cubic,
-        inputRange: [0, 100],
-        outputRange: [0, 100],
+        inputRange: [(music.listMusic.length > 15 ? 0 : 100), 100],
+        outputRange: [(music.listMusic.length > 15 ? 0 : 110), 110],
         extrapolate: 'clamp',
         useNativeDriver: true
     });
 
     //CARREGAMENTO E RECARREGAMENTO
     useEffect(() => {
-        controller.musicController.verifyPermission();
+        dispatch({ type: "VERIFY_PERMISSION" });
         //RECEBENDO MÚSICAS 
         DeviceEventEmitter.addListener('onBatchReceived', async (songs) => {
-            setListMusic(songs.batch.map((item) => { item.select = false; return item; }));
-            setRefreshList(false);
+            const list = songs.batch.map((item) => { item.select = false; return item; });
+            dispatch({ type: "LOADED_LIST_MUSIC", refreshList: false, listMusic: list, searchMusic: list });
             DeviceEventEmitter.removeAllListeners('onBatchReceived');
         });
-    }, [refreshList]);
+    }, [music.refreshList]);
 
-    //SELECIONANDO ITENS
-    function selectedItem(path){
-        const newSelected = new Map(selected);
-        if (selected.get(path))
-            newSelected.delete(path);
-        else
-            newSelected.set(path, !selected.get(path));
-        setSelected(newSelected);
-    }
+    useEffect(() => {
+        BackHandler.removeEventListener('hardwareBackPress');
+        BackHandler.addEventListener('hardwareBackPress', () => {
+            if(navigation.isFocused()) {
+                if (music.selected.size > 0) {
+                    dispatch({ type: "SELECT_ITENS_CLEAR", selected: music.selected });
+                    return true;
+                }
+                else 
+                    BackHandler.exitApp();
+            }
+        });
+    }, [music.selected]);
 
-    //SELECIONANDO TODOS OS ITENS
-    function selectedAllItens(){
-        const newSelected = new Map(selected);
-        if (selected.size != listMusic.length) {
-            listMusic.map(item => {
-                newSelected.set(item.path, selected.has(item.path) ? true : !selected.get(item.path));    
-            });   
-        }
-        else
-            newSelected.clear();    
-        setSelected(newSelected);
-    }
-    
     //ITENS EM LISTA E CARDS
     function renderItens ({ item, index }) {
-        if (1 == 4){ 
+        if (1 == 4) { 
             return (
                 <ItemList 
                     title={item.fileName} 
                     subtitle={item.path} 
                     cover={item.cover}
-                    onPress={() => { if(selected.size > 0) {selectedItem(item.path)} else controller.musicController.initMusic(listMusic, item.id)  }} 
+                    onPress={() => { if(music.selected.size > 0) { dispatch({ type: "SELECT_ITEM", selected: music.selected, path: item.path }) } else dispatch({ type: "ADD_OR_MODIFY_TRACK", listMusic: music.listMusic, musicId: item.id }) }} 
                     onOptionPress={() => setItemOptions({ path: itemOptions.path.set(item.path, true), modalVisible: true })} 
-                    onLongPressItem={() => selectedItem(item.path)}
-                    isSelect={!!selected.get(item.path)}
-                    listSelection={selected}
+                    onLongPressItem={() => dispatch({ type: "SELECT_ITEM", selected: music.selected, path: item.path })}
+                    isSelect={!!music.selected.get(item.path)}
+                    listSelection={music.selected} 
                 />
             );
         }    
@@ -81,16 +71,26 @@ export default function Music({ navigation }) {
                     subtitle={item.path} 
                     cover={item.cover} 
                     width={widthItem}
-                    onPress={() => { if(selected.size > 0) {selectedItem(item.path)} else controller.musicController.initMusic(listMusic, item.id)  }}
-                    onLongPressItem={() => selectedItem(item.path)}
+                    onPress={() => { if(music.selected.size > 0) {dispatch({ type: "SELECT_ITEM", selected: music.selected, path: item.path })} else dispatch({ type: "ADD_OR_MODIFY_TRACK", listMusic: music.listMusic, musicId: item.id }) }}
+                    onLongPressItem={() => dispatch({ type: "SELECT_ITEM", selected: music.selected, path: item.path })}
                     onOptionPress={() => setItemOptions({ path: itemOptions.path.set(item.path, true), modalVisible: true })}
-                    isSelect={!!selected.get(item.path)}
-                    listSelection={selected}  
+                    isSelect={!!music.selected.get(item.path)}
+                    listSelection={music.selected}  
                 />
             );
         }   
     }
 
+    function deleteItem(listFiles, listMusic){
+        Alert.alert(
+            (listFiles.size > 1 ? 'Excluir Arquivos' : 'Excluir Arquivo'),
+            (listFiles.size > 1 ? listFiles.size + ' Arquivos para excluir' : listFiles.size + ' Arquivo para excluir'),
+            [
+              { text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+              { text: 'Ok', onPress: () => dispatch({ type: "DELETE_FILE", listSeleted: listFiles, listMusic: listMusic }) }
+            ], { cancelable: true }
+        );
+    }
     
     return (
         <View style={{ flex: 1 }}>
@@ -103,31 +103,31 @@ export default function Music({ navigation }) {
                 <View style={style.containerFullOptions}>
                     <View style={[style.containerOptions, { width: (width - 60) }]}> 
                         <TouchableHighlight style={style.borderButtonOptions} underlayColor={"#C7C7C7"} onPress={() => alert("Testando")}><Text style={style.textOptions}>Adicionar a Playlist</Text></TouchableHighlight>
-                        <TouchableHighlight style={style.borderButtonOptions} underlayColor={"#C7C7C7"} onPress={() => controller.musicController.shareFile(itemOptions.path)}><Text style={style.textOptions}>Compartilhar</Text></TouchableHighlight>
-                        <TouchableHighlight style={style.borderButtonOptions} underlayColor={"#C7C7C7"} onPress={() => alert("Testando")}><Text style={style.textOptions}>Excluir</Text></TouchableHighlight>
+                        <TouchableHighlight style={style.borderButtonOptions} underlayColor={"#C7C7C7"} onPress={() => dispatch({ type: "SHARE_FILE", listSeleted: itemOptions.path })}><Text style={style.textOptions}>Compartilhar</Text></TouchableHighlight>
+                        <TouchableHighlight style={style.borderButtonOptions} underlayColor={"#C7C7C7"} onPress={() => deleteItem(itemOptions.path, music.listMusic)}><Text style={style.textOptions}>Excluir</Text></TouchableHighlight>
                         <TouchableHighlight underlayColor={"#C7C7C7"} onPress={() => alert("Testando")}><Text style={style.textOptions}>Detalhes</Text></TouchableHighlight>
                     </View>
                 </View>
             </Modal>
             <Animated.FlatList 
-                data={listMusic}
+                data={music.listMusic}
                 renderItem={renderItens}
                 initialNumToRender={20}
                 keyExtractor={item => item.path}
                 windowSize={50}
-                extraData={selected}
+                extraData={music.selected}
                 numColumns={3}
-                refreshControl={<RefreshControl refreshing={refreshList} onRefresh={() => setRefreshList(true)} />}
+                refreshControl={<RefreshControl refreshing={music.refreshList} onRefresh={() => dispatch({ type: "REFRESH_LIST", refreshList: true })} />}
                 onScroll={Animated.event([{nativeEvent: {contentOffset: { y: scrollY }}}])}
             />
             {
-                (selected.size > 0) ?
+                (music.selected.size > 0) ?
                 <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', backgroundColor: "#F89424" }}>
-                    <Avatar icon={{ name: 'th', size: 30, color: 'black',  type: 'font-awesome' }} onPress={() => selectedAllItens()} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
-                    <Avatar icon={{ name: 'trash', size: 30, color: 'black', type: 'font-awesome' }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
-                    <Text style={{ fontSize: 20, color: 'white' }}>{selected.size}</Text>
+                    <Avatar icon={{ name: 'th', size: 30, color: 'black',  type: 'font-awesome' }} onPress={() => dispatch({ type: "SELECT_ALL_ITEMS", listMusic: music.listMusic, selected: music.selected })} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
+                    <Avatar icon={{ name: 'trash', size: 30, color: 'black', type: 'font-awesome' }} onPress={() => deleteItem(music.selected, music.listMusic)} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
+                    <Text style={{ fontSize: 20, color: 'white' }}>{music.selected.size}</Text>
                     <Avatar icon={{ name: 'plus-circle', size: 30, color: 'black', type: 'font-awesome' }} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
-                    <Avatar icon={{ name: 'share-alt', size: 30, color: 'black', type: 'font-awesome' }} onPress={() => controller.musicController.shareFile(selected)} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
+                    <Avatar icon={{ name: 'share-alt', size: 30, color: 'black', type: 'font-awesome' }} onPress={() => dispatch({ type: "SHARE_FILE", listSeleted: music.selected })} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />
                 </View> : 
                 <></>
             }
