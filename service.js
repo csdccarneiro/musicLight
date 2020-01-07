@@ -1,10 +1,11 @@
 import TrackPlayer from 'react-native-track-player';
+import BackgroundTimer from 'react-native-background-timer';
 import { Animated, Easing } from 'react-native';
-import store from './store';
+import { store, persistor } from './store';
 
-export default async function Service(){
-    
-    setInterval(async () => {
+module.exports = async function() {
+
+    BackgroundTimer.setInterval(async () => {
         const position = await TrackPlayer.getPosition();
         const duration = await TrackPlayer.getDuration();
         const music = await store.getState();
@@ -16,14 +17,14 @@ export default async function Service(){
             else if(music.player.modeReproduction == "repeat")
                 TrackPlayer.seekTo(0);
         }
+        if (await TrackPlayer.getState() == TrackPlayer.STATE_PLAYING)
+            store.dispatch({ type: "UPDATE_POSITION_AND_DURATION", position: position, duration: duration });
+
     }, 500);
 
-    TrackPlayer.addEventListener('remote-play', async () => {
-        store.dispatch({ type: "TRACK_PLAY" });
-    });
-
     TrackPlayer.addEventListener('playback-track-changed', async (event) => {
-        store.dispatch({ type: "TRACK_CHANGE", dataMusic: await TrackPlayer.getTrack(event.nextTrack) });
+        if (await TrackPlayer.getState() !== TrackPlayer.STATE_PAUSED)
+            store.dispatch({ type: "TRACK_CHANGE", dataMusic: await TrackPlayer.getTrack(event.nextTrack) });        
     });
 
     TrackPlayer.addEventListener('playback-state', async (event) => {
@@ -40,13 +41,17 @@ export default async function Service(){
         
         if(event.state === TrackPlayer.STATE_PLAYING) {
             animationLoop.start();
-            store.dispatch({ type: "MODIFY_STATE", animationLoop: spin });
+            store.dispatch({ type: "MODIFY_STATE", animationLoop: spin, iconPlayer: "pause" });
         }
         else if(event.state === TrackPlayer.STATE_PAUSED) {
             animationLoop.stop();
-            store.dispatch({ type: "MODIFY_STATE", animationLoop: spin });
+            store.dispatch({ type: "MODIFY_STATE", animationLoop: spin, iconPlayer: "play" });
         }
 
+    });
+
+    TrackPlayer.addEventListener('remote-play', async () => {
+        store.dispatch({ type: "TRACK_PLAY" });
     });
 
     TrackPlayer.addEventListener('remote-pause', async () => {
@@ -80,9 +85,10 @@ export default async function Service(){
     
     TrackPlayer.addEventListener('playback-queue-ended', async (data) => {
         if (data.track != null) {
-            TrackPlayer.add(await TrackPlayer.getQueue());
+            var list = await TrackPlayer.getQueue();
+            TrackPlayer.skip(list[0].id);
             TrackPlayer.play();
         }
     });
-    
+
 }

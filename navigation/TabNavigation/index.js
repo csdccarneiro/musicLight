@@ -74,8 +74,7 @@ const HeaderFull = ({navigation}) => {
                             dispatch({ type: "SEARCH_MUSIC", searchMusic: event.nativeEvent.text, listSearchMusic: music.searchMusic });
                         }    
                     }}
-                    onChangeText={(text) => { if(text == "") dispatch({ type: "LOADED_LIST_MUSIC", searchMusic: music.searchMusic, listMusic: music.listMusic }) }}
-             
+                    onChangeText={(text) => { if(text == "") dispatch({ type: "SEARCH_MUSIC", searchMusic: "", listSearchMusic: music.searchMusic }) }}
                 />
             </View>
             <Avatar icon={{ name: 'navicon', size: 30, color: 'white', type: 'font-awesome' }} onPress={() => navigation.openDrawer()} overlayContainerStyle={{ backgroundColor: 'transparent' }} size={"medium"} />

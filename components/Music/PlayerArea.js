@@ -1,19 +1,17 @@
 import React from 'react';
-import { View, Animated, Text, StyleSheet, Easing } from 'react-native';
+import { View, Animated, Text, StyleSheet } from 'react-native';
 import { Avatar, Slider } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
-import { useTrackPlayerProgress, seekTo, getState, STATE_PLAYING, STATE_PAUSED } from 'react-native-track-player';
+import { seekTo, getState, STATE_PLAYING, STATE_PAUSED } from 'react-native-track-player';
 
 export default function PlayerArea(props){
 
     const music = useSelector(state => state.player);
     const dispatch = useDispatch();
-    const { position, bufferedPosition, duration } = useTrackPlayerProgress();
 
     async function toggleStatePlayer(){ 
-        if (await getState() === STATE_PLAYING){
+        if (await getState() === STATE_PLAYING)
             dispatch({ type: "TRACK_PAUSE" });
-        }
         else if(await getState() === STATE_PAUSED)
             dispatch({ type: "TRACK_PLAY" });    
     }
@@ -44,12 +42,12 @@ export default function PlayerArea(props){
                     <Avatar icon={{ name: music.modeReproduction, type: 'font-awesome', color: '#C7C7C7', size: 25 }} overlayContainerStyle={style.coverStyle} size={"medium"} onPress={() => dispatch({ type: "CHANGE_MODE_REPRODUCTION" })} />
                 </View>
                 <View style={style.playerTime}>
-                    <Text style={style.colorText}>{formatTime(position)}</Text>
-                    <Slider style={style.playerSlider} animateTransitions={true} animationType={'spring'} value={position} onValueChange ={ value => { seekTo(value) }} maximumValue={duration} trackStyle={{ height: 3 }} thumbStyle={{ height: 13, width: 13 }} />
-                    <Text style={style.colorText}>{formatTime(duration)}</Text>
+                    <Text style={style.colorText}>{formatTime(music.position)}</Text>
+                    <Slider style={style.playerSlider} animateTransitions={true} animationType={'spring'} value={music.position} onValueChange ={ value => { seekTo(value) }} maximumValue={music.duration} trackStyle={{ height: 3 }} thumbStyle={{ height: 13, width: 13 }} />
+                    <Text style={style.colorText}>{formatTime(music.duration)}</Text>
                 </View>
                 <View style={style.playerContainerTrack}>
-                    <Text numberOfLines={1} style={style.colorText}>{String(music.fileName).split('.')[0]}</Text>    
+                    <Text numberOfLines={1} style={style.colorText}>{music.fileName}</Text>    
                 </View>
             </View> 
         </Animated.View>
