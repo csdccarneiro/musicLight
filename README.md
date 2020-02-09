@@ -1,5 +1,4 @@
 # MusicLight
-<<<<<<< HEAD
 
 Aplicativo para escutar músicas, com algumas funções como compartilhamento de músicas e controles por bluetooth.       
 
