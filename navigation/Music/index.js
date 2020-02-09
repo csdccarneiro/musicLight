@@ -137,6 +137,7 @@ export default function Music() {
                 extraData={itemSelected}
                 key={music.modeList.activeCard ? 3 : 1}
                 numColumns={music.modeList.activeCard ? 3 : 1}
+                contentContainerStyle={{ alignSelf: (music.modeList.activeCard ? 'center' : 'auto') }}
                 refreshControl={<RefreshControl refreshing={music.refreshList} onRefresh={() => dispatch({ type: "REFRESH_LIST", refreshList: true })} />}
                 ListEmptyComponent={<Text style={{ textAlign: 'center', fontSize: 16 }}>Carregando...</Text>}
                 onScroll={Animated.event([{nativeEvent: {contentOffset: { y: scrollY }}}])}
