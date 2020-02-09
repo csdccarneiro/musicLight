@@ -1,4 +1,5 @@
 # MusicLight
+<<<<<<< HEAD
 
 Aplicativo para escutar músicas, com algumas funções como compartilhamento de músicas e controles por bluetooth.       
 
@@ -40,3 +41,7 @@ No momento o projeto não foi testado no ios, mas no futuro será devidamente te
 
 
 
+=======
+![](https://github.com/csdccarneiro/musicLight/blob/master/images/github/SimulatorApp.jpg)
+Em construção
+>>>>>>> 4120db59def323ee5be521812f97bb8733f5debe
