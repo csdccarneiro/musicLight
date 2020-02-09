@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Animated, Text, StyleSheet } from 'react-native';
 import { Avatar, Slider } from 'react-native-elements';
 import { useSelector, useDispatch } from 'react-redux';
-import { seekTo, getState, STATE_PLAYING, STATE_PAUSED } from 'react-native-track-player';
+import { seekTo, getState, STATE_PLAYING, STATE_PAUSED, getVolume } from 'react-native-track-player';
 
 export default function PlayerArea(props){
 
@@ -14,6 +14,13 @@ export default function PlayerArea(props){
             dispatch({ type: "TRACK_PAUSE" });
         else if(await getState() === STATE_PAUSED)
             dispatch({ type: "TRACK_PLAY" });    
+    }
+
+    async function toggleVolume(){ 
+        if (await getVolume() === 1)
+            dispatch({ type: "CHANGE_VOLUME", volume: 0 });
+        else if(await getVolume() === 0)
+            dispatch({ type: "CHANGE_VOLUME", volume: 1 });
     }
 
     function formatTime(seconds) {
@@ -35,15 +42,15 @@ export default function PlayerArea(props){
             </View>
             <View style={style.playerContainerControllers}>
                 <View style={style.playerContainerIcons}>
-                    <Avatar icon={{ name: 'star-o', type: 'font-awesome', color: '#C7C7C7', size: 25 }} overlayContainerStyle={style.coverStyle}  size={"medium"} />
+                    <Avatar icon={{ name: (Boolean(music.volume) ? 'volume-up' : 'volume-off'), type: 'font-awesome', color: '#C7C7C7', size: 25 }} onPress={toggleVolume} overlayContainerStyle={style.coverStyle}  size={"medium"} />
                     <Avatar icon={{ name: 'backward', type: 'font-awesome', color: '#C7C7C7', size: 30 }} onPress={() => dispatch({ type: "TRACK_PREVIOUS" })} overlayContainerStyle={style.coverStyle} size={"medium"} />
                     <Avatar rounded icon={{ name: music.iconPlayer, type: 'font-awesome', color: 'black', size: 30 }} onPress={toggleStatePlayer} size={"medium"} />
                     <Avatar icon={{ name: 'forward', type: 'font-awesome', color: '#C7C7C7', size: 30 }} onPress={() => dispatch({ type: "TRACK_NEXT" })} overlayContainerStyle={style.coverStyle} size={"medium"} />
-                    <Avatar icon={{ name: music.modeReproduction, type: 'font-awesome', color: '#C7C7C7', size: 25 }} overlayContainerStyle={style.coverStyle} size={"medium"} onPress={() => dispatch({ type: "CHANGE_MODE_REPRODUCTION" })} />
+                    <Avatar icon={{ name: music.modeReproduction, type: 'font-awesome', color: '#C7C7C7', size: 25 }} onPress={() => dispatch({ type: "CHANGE_MODE_REPRODUCTION" })} overlayContainerStyle={style.coverStyle} size={"medium"} />
                 </View>
                 <View style={style.playerTime}>
                     <Text style={style.colorText}>{formatTime(music.position)}</Text>
-                    <Slider style={style.playerSlider} animateTransitions={true} animationType={'spring'} value={music.position} onValueChange ={ value => { seekTo(value) }} maximumValue={music.duration} trackStyle={{ height: 3 }} thumbStyle={{ height: 13, width: 13 }} />
+                    <Slider style={style.playerSlider} animateTransitions={true} animationType={'spring'} value={music.position} onValueChange ={value => seekTo(value)} maximumValue={music.duration} trackStyle={{ height: 3 }} thumbStyle={{ height: 13, width: 13 }} />
                     <Text style={style.colorText}>{formatTime(music.duration)}</Text>
                 </View>
                 <View style={style.playerContainerTrack}>
@@ -59,7 +66,8 @@ const style = StyleSheet.create({
         backgroundColor: 'black', 
         flexDirection: 'row', 
         alignItems: 'center', 
-        overflow: 'hidden'
+        overflow: 'hidden',
+        marginTop: -1
     },
     playerContainerControllers: {
         flex: 1,

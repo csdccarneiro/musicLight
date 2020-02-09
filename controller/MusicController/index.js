@@ -75,19 +75,19 @@ class MusicController {
         });
     }
 
-    initMusic = async (listTrack, currentTrackId, position) => {
+    initMusic = async (listTrack, player) => {
         if (await TrackPlayer.getQueue() != "" && listTrack != []) {
             const list = await TrackPlayer.getQueue();
             if (list.length != listTrack.length) {
                 await TrackPlayer.destroy();
-                this.addMusic(listTrack, currentTrackId, position);
+                this.addMusic(listTrack, player);
             }
         }
         else 
-            this.addMusic(listTrack, currentTrackId, position);
+            this.addMusic(listTrack, player);
     }
     
-    addMusic = (listTrack, musicId, position) => {
+    addMusic = (listTrack, player) => {
         
         if (listTrack.length > 0) {
             TrackPlayer.setupPlayer().then(() => {
@@ -115,10 +115,12 @@ class MusicController {
                     ]
                 });
                 TrackPlayer.add(list);
-                if (musicId != null) {
-                    TrackPlayer.skip(musicId);
-                    TrackPlayer.seekTo(position);
+                if (player.id != null) {
+                    TrackPlayer.skip(player.id);
+                    TrackPlayer.seekTo(player.position);
                 }   
+                TrackPlayer.setRate(player.velocity);
+                TrackPlayer.setVolume(player.volume);
             });    
         }
 

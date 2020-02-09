@@ -17,9 +17,7 @@ module.exports = async function() {
             else if(music.player.modeReproduction == "repeat")
                 TrackPlayer.seekTo(0);
         }
-        if (await TrackPlayer.getState() == TrackPlayer.STATE_PLAYING)
-            store.dispatch({ type: "UPDATE_POSITION_AND_DURATION", position: position, duration: duration });
-
+        store.dispatch({ type: "UPDATE_POSITION_AND_DURATION", position: position, duration: duration });
     }, 500);
 
     TrackPlayer.addEventListener('playback-track-changed', async (event) => {

@@ -8,6 +8,7 @@ const DATA_PLAYER = {
     duration: 0,
     position: 0,
     velocity: 1,
+    volume: 1,
     modeReproduction: 'refresh',
     iconPlayer: 'play',
     playing: false,
@@ -40,6 +41,14 @@ const player = (state = DATA_PLAYER, action) => {
                 return { ...state, modeReproduction: "random" };
             else
                 return { ...state, modeReproduction: "refresh" };
+        break;
+        case "CHANGE_VELOCITY_REPRODUCTION":
+            TrackPlayer.setRate(action.velocity);
+            return { ...state, velocity: action.velocity };
+        break;
+        case "CHANGE_VOLUME":
+            TrackPlayer.setVolume(action.volume);
+            return { ...state, volume: action.volume };
         break;
         case "TRACK_PREVIOUS":
             TrackPlayer.skipToPrevious();

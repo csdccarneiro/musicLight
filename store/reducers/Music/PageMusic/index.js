@@ -3,7 +3,8 @@ import controller from '../../../../controller';
 const DATA_PAGE_MUSIC = {
     listMusic: [],
     searchMusic: [],
-    refreshList: false
+    refreshList: false,
+    modeList: { activeCard: true }
 };
 
 const page_music = (state = DATA_PAGE_MUSIC, action) => {
@@ -14,8 +15,8 @@ const page_music = (state = DATA_PAGE_MUSIC, action) => {
             return state;
         break;
         case "LOADED_LIST_MUSIC":
-            if (action.searchMusic.length == action.listMusic.length){
-                controller.musicController.initMusic(action.listMusic, action.currentTrackId, action.position);
+            if (action.searchMusic.length == action.listMusic.length) {
+                controller.musicController.initMusic(action.listMusic, action.player);
                 return { ...state, refreshList: action.refreshList, listMusic: action.listMusic, searchMusic: action.searchMusic };
             }
             else
@@ -38,8 +39,12 @@ const page_music = (state = DATA_PAGE_MUSIC, action) => {
             else
                 return { ...state, listMusic: action.listSearchMusic };
         break;
+        case "CHANGE_MODE_LIST":
+            return { ...state, modeList: action.modeList };
+        break;
         default: return state;
         break;
+        
     }
 }
 

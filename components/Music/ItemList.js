@@ -23,14 +23,15 @@ export default function ItemList(props) {
           <View style={{ width: 30 }}>
               <TouchableOpacity onPress={props.onOptionPress}>
                   {
-                      (props.listSelection.size == 0) ? 
-                          <FastImage
-                              style={{ width: 20, height: 20, margin: 3, borderRadius: 10 }}
-                              source={require('../../images/ellipsis.png')}
-                              resizeMode={FastImage.resizeMode.contain}
-                          /> :
-                      <>
-                      </> 
+                    (props.listSelection.size == 0) ? 
+                        <FastImage
+                            style={style.iconOptions}
+                            source={require('../../images/ellipsis.png')}
+                            resizeMode={FastImage.resizeMode.contain}
+                        /> 
+                    :
+                        <>
+                        </> 
                   }
               </TouchableOpacity>
           </View>
@@ -51,5 +52,11 @@ const style = StyleSheet.create({
     },
     itemSubtitle: {
       fontSize: 13
+    },
+    iconOptions: {
+      width: 20, 
+      height: 20, 
+      margin: 3, 
+      borderRadius: 10
     }
 });
