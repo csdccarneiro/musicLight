@@ -1,11 +1,11 @@
 import { createStore, combineReducers } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
+import AsyncStorage from '@react-native-community/async-storage';
 import { player, page_music } from './reducers';
 
 const persisConfig = {
     key: 'root',
-    storage
+    storage: AsyncStorage
 };
 
 const persistedReducer = persistReducer(persisConfig, combineReducers({
