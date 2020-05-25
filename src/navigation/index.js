@@ -1,6 +1,5 @@
 import React from 'react';
 import { enableScreens } from 'react-native-screens';
-import { PermissionsAndroid, BackHandler } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from '../store';

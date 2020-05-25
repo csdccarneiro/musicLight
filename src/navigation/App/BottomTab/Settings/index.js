@@ -1,17 +1,15 @@
 import React from 'react';
 import { View, Button } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { connect } from 'react-redux';
 
-function Settings() {
-
-    const dispatch = useDispatch();
+function Settings({ dispatch }) {
 
     return (
         <View>
-            <Button title={'Teste'} onPress={() => dispatch({ type: "MODIFY_THEME" })}  />
+            <Button title={'Teste'} onPress={() => dispatch({ type: "CHANGE_THEME" })}  />
         </View>
     );
 
 } 
 
-export default Settings;
+export default connect(state => ({ app: state.App }))(Settings);

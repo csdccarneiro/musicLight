@@ -1,23 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { connect } from 'react-redux';
 
 //TELA INICIAL
-import BottomTab from './BottomTab';
+import BottomTab from './BottomTab'; 
 
 //TEMAS
 import THEMES from '../../Themes';
 
-function AppContainer({ app }) {
+function AppContainer({ app, dispatch }) {
 
-    // theme={app.dark ? THEME.dark : THEME.light}
+    useEffect(() => {
+        dispatch({ type: "ASYNC_GET_MUSICS", payload: {} });
+    }, []);
 
     return (
-        <NavigationContainer>
+        <NavigationContainer theme={app.dark ? THEMES.Dark : THEMES.Light}>
             <BottomTab />
         </NavigationContainer>
     );
 
 }
 
-export default connect()(AppContainer);
+export default connect(state => ({ app: state.App }))(AppContainer);
