@@ -1,5 +1,5 @@
 import React from 'react';
-import { PermissionsAndroid, BackHandler } from 'react-native';
+import { PermissionsAndroid, BackHandler, Dimensions } from 'react-native';
 import MusicFiles from "react-native-get-music-files";
 
 
@@ -9,33 +9,34 @@ class AppController {
 
         const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
         const response = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
+
         if (check === PermissionsAndroid.RESULTS.GRANTED || response === PermissionsAndroid.RESULTS.GRANTED)
             return await this.getMusics();
         else 
             BackHandler.exitApp();
-            
+    
     }    
 
     async getMusics() {
 
-        const allMusic = await MusicFiles.getAll({
-            artist: false,
-            duration: false,
-            album: false,
-            genre: false,
+        var localListMusic = await MusicFiles.getAll({
+            artist: true,
+            duration: true,
             id: true,
             cover: true,
             path: true,
             title: true,
             minimumSongDuration : 1000, 
-            fields: ['title','albumTitle','genre','lyrics','artwork','duration']
+            fields: ['title','artwork','duration','artist','genre','lyrics','albumTitle']
         });
 
-        return allMusic.map(track => {
+        localListMusic = localListMusic.map(track => {
             track.fileName = track.fileName.replace(/\.[^/.]+$/, "");
             track.title = (track.title ? track.title : "Artista desconhecido");
             return track;
         });
+
+        return { localListMusic, widthItems: (Dimensions.get("window").width / 2) * 0.8 };
 
     }
     
