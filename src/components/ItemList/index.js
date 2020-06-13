@@ -18,14 +18,13 @@ function ItemList({ id, title, subtitle, icon, colors, widthItem,
         onItemPress, optionsVisible, onSelect, selected }: ItemListProps) {
     
     return (
-        <TouchableOpacity style={{ ...styles.button, width: widthItem, 
-            borderColor: colors.text, backgroundColor: (selected ? colors.primary : null) }} 
-            onLongPress={() => onSelect(id)} onPress={() => alert("Olá")}>
+        <TouchableOpacity onPress={() => alert("Olá")} style={{ ...styles.button, width: widthItem, 
+            backgroundColor: (selected ? colors.primary : null) }} onLongPress={() => onSelect(id)}>
             <Image source={{ uri: icon }} style={styles.image} />
             <TouchableOpacity style={styles.containerText} 
                 onLongPress={() => optionsVisible({ visible: true, currentMusic: { title, icon } })}>
                 <Text numberOfLines={1} style={{ ...styles.title, color: colors.text }}>{title}</Text>
-                <Text numberOfLines={1} style={{ color: colors.text, fontSize: 11 }}>{subtitle}</Text>
+                <Text numberOfLines={1} style={{ ...styles.subtitle, color: colors.text }}>{subtitle}</Text>
             </TouchableOpacity>
         </TouchableOpacity>
     );
@@ -37,7 +36,8 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         height: 210,
         marginBottom: 10,
-        borderWidth: 0.1,
+        borderWidth: 0.3,
+        borderColor: "#808080",
         overflow: "hidden"
     },
     containerText: {
@@ -46,7 +46,12 @@ const styles = StyleSheet.create({
     },
     title: {
         fontWeight: 'bold',
+        fontFamily: "sans-serif-medium",
         fontSize: 16
+    },
+    subtitle: {
+        fontSize: 10,
+        fontFamily: "sans-serif-medium"
     },
     image: {
         flex: 1,

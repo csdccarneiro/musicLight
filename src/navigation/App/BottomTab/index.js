@@ -1,6 +1,7 @@
 import React from 'react';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { MiniPlayer } from '../../../components';
 
 //PAGES
 import Music from './Music';
@@ -8,9 +9,20 @@ import Playlist from './Playlist';
 import Search from './Search';
 import Settings from './Settings';
 
+const Tab = createBottomTabNavigator();
+
+//BAR CUSTOMIZADA
+function CustomTabBar(props) {
+
+    return (
+        <>
+            <MiniPlayer />
+            <BottomTabBar {...props} />
+        </>
+    );
+}
+
 function BottomTab() {
-    
-    const Tab = createBottomTabNavigator();
     
     const iconMusic = ({ color }) => <Icon name="music" color={color} size={20} />;
     const iconSearch = ({ color }) => <Icon name="search" color={color} size={20} />;
@@ -18,11 +30,12 @@ function BottomTab() {
     const iconSettings = ({ color }) => <Icon name="cog" color={color} size={20} />;
     
     return (
-        <Tab.Navigator backBehavior={'initialRoute'} tabBarOptions={{ adaptive: true, inactiveTintColor: 'gray' }} >
-            <Tab.Screen name="Musicas" component={Music} options={{ tabBarIcon: iconMusic }} />
-            <Tab.Screen name="Pesquisar" component={Search} options={{ tabBarIcon: iconSearch }} />
-            <Tab.Screen name="Playlist" component={Playlist} options={{ tabBarIcon: iconPlaylist }} />
-            <Tab.Screen name="Configurações" component={Settings} options={{ tabBarIcon: iconSettings }} />
+        <Tab.Navigator backBehavior={'initialRoute'} tabBar={CustomTabBar} 
+            tabBarOptions={{ adaptive: true, inactiveTintColor: 'gray' }} >
+            <Tab.Screen name={"Musicas"} component={Music} options={{ tabBarIcon: iconMusic }} />
+            <Tab.Screen name={"Pesquisar"} component={Search} options={{ tabBarIcon: iconSearch }} />
+            <Tab.Screen name={"Playlist"} component={Playlist} options={{ tabBarIcon: iconPlaylist }} />
+            <Tab.Screen name={"Configurações"} component={Settings} options={{ tabBarIcon: iconSettings }} />
         </Tab.Navigator>
     );
 

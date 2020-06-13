@@ -19,7 +19,7 @@ function Music ({ app }) {
     const onItemPress = React.useCallback(() => alert('Olá'), []);
 
     function renderItems({ item }) {
-        
+
         return (
             <ItemList 
                 id={item.id}
@@ -56,7 +56,7 @@ function Music ({ app }) {
                 ListEmptyComponent={<ActivityIndicator size={"large"} color={colors.primary} />}
                 style={styles.list}
                 numColumns={2}
-                extraData={{ selected, colors }}
+                extraData={selected}
                 renderItem={renderItems}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
