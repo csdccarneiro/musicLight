@@ -1,22 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, FlatList, ActivityIndicator, StyleSheet, Text, Image, TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
 import { ItemList, Overlay } from '../../../../components';
 
 function Music ({ app }) {
-
+    
     const [ selected, setSelected ] = useState(new Map());
     const [ modal, setModal ] = useState({ visible: false, currentMusic: {} });
     const { colors } = useTheme();
     
-    const onSelect = React.useCallback(id => {
+    const onSelect = useCallback(id => {
         const newSelected = new Map(selected);
         newSelected.set(id, !selected.get(id));
         setSelected(newSelected);
     }, [selected]);
 
-    const onItemPress = React.useCallback(() => alert('Olá'), []);
+    const onItemPress = useCallback(() => alert('Olá'), []);
 
     function renderItems({ item }) {
 

@@ -3,12 +3,12 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useTheme } from '@react-navigation/native';
 
-function MiniPlayer() {
+function MiniPlayer({ navigation }) {
 
     const { colors } = useTheme();
-
+    
     return (
-        <TouchableOpacity style={{ ...styles.container, backgroundColor: colors.primary }}>
+        <TouchableOpacity onPress={() => navigation.navigate("Player")} style={{ ...styles.container, backgroundColor: colors.primary }}>
             <Image source={{ uri: "file:///storage/emulated/0/354306.jpg" }} style={styles.image} />
             <View style={styles.containerText}> 
                 <Text numberOfLines={1} style={styles.playerTitle}>Radioactive Imagine Dragons (ft The Macy Kate Band  Kurt Schneider)</Text>

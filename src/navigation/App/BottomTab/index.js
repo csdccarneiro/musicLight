@@ -13,10 +13,9 @@ const Tab = createBottomTabNavigator();
 
 //BAR CUSTOMIZADA
 function CustomTabBar(props) {
-
     return (
         <>
-            <MiniPlayer />
+            <MiniPlayer navigation={props.navigation} />
             <BottomTabBar {...props} />
         </>
     );
