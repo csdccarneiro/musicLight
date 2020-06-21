@@ -11,9 +11,9 @@ interface OverlayProps {
 function Overlay ({ children, isVisible, onClose, animation, style }: OverlayProps) {
     
     return (
-        <Modal visible={isVisible} transparent={true} animationType={animation} hardwareAccelerated={true}
-            onRequestClose={() => onClose({ visible: false, currentMusic: {} })} >
-            <View style={styles.background} onStartShouldSetResponder={() => onClose({ visible: false, currentMusic: {} })} />
+        <Modal visible={isVisible} transparent={true} animationType={animation}
+            hardwareAccelerated={true} onRequestClose={() => onClose({  })} >
+            <View style={styles.background} onStartShouldSetResponder={() => onClose({ })} />
             <View style={styles.container}>
                 <View style={style}>{children}</View>
             </View>

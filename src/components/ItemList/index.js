@@ -6,25 +6,28 @@ interface ItemListProps {
     title: String,
     subtitle: String,
     icon: String,
-    colors: Object,
+    colorSelected: String,
     widthItem: Number,
     onItemPress: Function,
     optionsVisible: Function,
     onSelect: Function,
-    selected: Boolean
+    selected: Map
 }
 
-function ItemList({ id, title, subtitle, icon, colors, widthItem,
+function ItemList({ id, title, subtitle, icon, colorSelected, colorText, widthItem,
         onItemPress, optionsVisible, onSelect, selected }: ItemListProps) {
     
+    const isSelected = selected.has(id);
+    
     return (
-        <TouchableOpacity onPress={() => alert("Olá")} style={{ ...styles.button, width: widthItem, 
-            backgroundColor: (selected ? colors.primary : null) }} onLongPress={() => onSelect(id)}>
+        <TouchableOpacity onPress={() => { selected.size > 0 ? onSelect(id) : onItemPress() }} 
+            style={{ ...styles.button, width: widthItem, backgroundColor: (isSelected ? colorSelected : null) }} 
+            onLongPress={() => { if(selected.size <= 0) onSelect(id) }}>
             <Image source={{ uri: icon }} style={styles.image} />
             <TouchableOpacity style={styles.containerText} 
-                onLongPress={() => optionsVisible({ visible: true, currentMusic: { title, icon } })}>
-                <Text numberOfLines={1} style={{ ...styles.title, color: colors.text }}>{title}</Text>
-                <Text numberOfLines={1} style={{ ...styles.subtitle, color: colors.text }}>{subtitle}</Text>
+                onLongPress={() => { if(selected.size <= 0) optionsVisible({ title }) }}>
+                <Text numberOfLines={1} style={{ ...styles.title, color: (!isSelected ? colorText : "white") }}>{title}</Text>
+                <Text numberOfLines={1} style={{ ...styles.subtitle, color: (!isSelected ? colorText : "white") }}>{subtitle}</Text>
             </TouchableOpacity>
         </TouchableOpacity>
     );
