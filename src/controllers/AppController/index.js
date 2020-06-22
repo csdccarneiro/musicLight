@@ -30,16 +30,10 @@ class AppController {
             fields: ['title','artwork','duration','artist','genre','lyrics','albumTitle']
         });
 
-        localListMusic = localListMusic.map(track => {
-            track.fileName = track.fileName.replace(/\.[^/.]+$/, "");
-            track.title = (track.title ? track.title : "Artista desconhecido");
-            return track;
-        });
-
         return { localListMusic, widthItems: (Dimensions.get("window").width / 2) * 0.8 };
 
     }
     
 }
 
-module.exports = new AppController();
+export default new AppController();

@@ -6,22 +6,27 @@ const DATA_INITIAL_APP = {
     widthItems: 0
 };
 
-
 const App = (state = DATA_INITIAL_APP, action) => {
     switch (action.type) {
         case "CHANGE_THEME":
             return { ...state, dark: !state.dark };
         break;
         case "GET_MUSICS":
-            if(state.widthItems > 0)
-                return { ...state, localListMusic: action.payload.localListMusic };
-            else 
-                return { ...state, localListMusic: action.payload.localListMusic, 
+            if(action.payload.localListMusic.length != state.localListMusic.length) {
+                var localListMusic = action.payload.localListMusic.map(track => {
+                    track.fileName = track.fileName.replace(/\.[^/.]+$/, "");
+                    track.title = (track.title ? track.title : "Artista desconhecido");
+                    track.cover = (track.cover ? track.cover : state.icon_music);
+                    return track;
+                });
+                return { ...state, localListMusic: localListMusic, 
                     widthItems: action.payload.widthItems };
+            }
+            else 
+                return state;
         break;
         default: return state;
         break;
-        
     }
 }
 

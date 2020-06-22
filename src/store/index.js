@@ -2,7 +2,7 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import AsyncStorage from '@react-native-community/async-storage';
-import { App } from './reducers';
+import { App, Player } from './reducers';
 import root from './sagas';
 
 //CONFIGURAÇÃO DE PERSISTÊNCIA
@@ -13,7 +13,8 @@ const persisConfig = {
 
 //COMBINANDO REDUCERS
 const persistedReducer = persistReducer(persisConfig, combineReducers({
-    App
+    App, 
+    Player
 }));
 
 const sagaMiddleware = createSagaMiddleware();

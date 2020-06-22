@@ -5,7 +5,7 @@ import { useTheme } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { ItemList, Overlay } from '../../../../components';
 
-function Music ({ app }) {
+function Music ({ app, dispatch }) {
     
     const [ selected, setSelected ] = useState(new Map());
     const [ modal, setModal ] = useState({ visible: false, title: undefined });
@@ -15,14 +15,16 @@ function Music ({ app }) {
         const newSelected = new Map(selected);
         if(Array.isArray(musicId)) 
             (newSelected.size == musicId.length ? newSelected.clear() : 
-            musicId.map(music => newSelected.set(music.path, true)));
+            musicId.map(music => newSelected.set(music.id, true)));
         else 
             (!newSelected.has(musicId) ? newSelected.set(musicId, true) : 
             newSelected.delete(musicId));
         setSelected(newSelected);
     }, [selected]);
 
-    const onItemPress = useCallback(() => alert('Olá'), []);
+    const onItemPress = useCallback(musicId => {
+        dispatch({ type: "ADD_OR_INIT_MUSICS", payload: { localListMusic: app.localListMusic, musicId } });
+    }, []);
 
     const onItemOptions = useCallback(item => {
         setModal({ visible: (item.title ? true : false), title: item.title });
@@ -32,10 +34,10 @@ function Music ({ app }) {
 
         return (
             <ItemList 
-                id={item.path}
+                id={item.id}
                 title={item.fileName}
                 subtitle={item.title}
-                icon={item.cover ? item.cover : app.icon_music}
+                icon={item.cover}
                 colorSelected={colors.primary}
                 colorText={colors.text}
                 widthItem={app.widthItems}

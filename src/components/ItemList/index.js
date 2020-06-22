@@ -20,7 +20,7 @@ function ItemList({ id, title, subtitle, icon, colorSelected, colorText, widthIt
     const isSelected = selected.has(id);
     
     return (
-        <TouchableOpacity onPress={() => { selected.size > 0 ? onSelect(id) : onItemPress() }} 
+        <TouchableOpacity onPress={() => { selected.size > 0 ? onSelect(id) : onItemPress(id) }} 
             style={{ ...styles.button, width: widthItem, backgroundColor: (isSelected ? colorSelected : null) }} 
             onLongPress={() => { if(selected.size <= 0) onSelect(id) }}>
             <Image source={{ uri: icon }} style={styles.image} />
