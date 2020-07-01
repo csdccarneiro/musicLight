@@ -1,48 +1,73 @@
 import React, { memo } from 'react';
 import { View, Image, Text, StyleSheet } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
 import { useTheme } from '@react-navigation/native';
+import { connect } from 'react-redux';
   
-function Player({ navigation }) {
+function Player({ navigation, player, dispatch }) {
 
     const { colors } = useTheme();
+
+    function formatTime(seconds) {
+        return seconds > 3600 ?
+        [parseInt(seconds / 60 / 60), parseInt(seconds / 60 % 60), parseInt(seconds % 60)]
+        .join(":").replace(/\b(\d)\b/g, "0$1") :
+        [parseInt(seconds / 60 % 60), parseInt(seconds % 60)]
+        .join(":").replace(/\b(\d)\b/g, "0$1")
+    }
+
+    function togglePlay() {
+        if(player.play)
+           dispatch({ type: "TRACK_PAUSE" });
+        else
+            dispatch({ type: "TRACK_PLAY" });
+    }
 
     return (
         <View style={styles.container}>
             <View style={styles.containerOptions}>
-                <Icon.Button name={"chevron-down"} size={20} color={colors.text} backgroundColor={"transparent"}
+                <Icon.Button name={"expand-more"} size={25} color={colors.text} underlayColor={"#B7B6B6"}
+                    backgroundColor={"transparent"} onPress={() => navigation.goBack()} iconStyle={{ marginRight: 2 }} />
+                <Icon.Button name={"more-vert"} size={25} color={colors.text} backgroundColor={"transparent"}
                     underlayColor={"#B7B6B6"} onPress={() => navigation.goBack()} iconStyle={{ marginRight: 0 }} />
-                <Icon.Button name={"ellipsis-v"} size={20} color={colors.text} backgroundColor={"transparent"} 
-                    iconStyle={{ marginRight: 0 }} />
             </View>
             <View style={styles.containerTrackInfo}>
-                <Image source={{ uri: "file:///storage/emulated/0/354306.jpg" }} style={styles.image} />
+                <Image source={{ uri: player.icon }} style={styles.image} />
                 <View>
-                    <Text style={{ ...styles.playerTitle, color: colors.text }}>Radioactive Imagine Dragons (ft The Macy Kate Band  Kurt Schneider)</Text>
-                    <Text style={{ ...styles.playersubtitle, color: colors.text }}>Artista Desconhecido</Text>
+                    <Text style={{ ...styles.playerTitle, color: colors.text }}>{player.title}</Text>
+                    <Text style={{ ...styles.playersubtitle, color: colors.text }}>{player.subtitle}</Text>
                 </View>
                 <View>
-                    <Slider style={styles.slider} minimumValue={0} maximumValue={1} thumbTintColor={colors.primary} 
-                        minimumTrackTintColor={colors.primary} maximumTrackTintColor={colors.text} />
+                    <Slider style={styles.slider} minimumValue={0} maximumValue={player.duration} value={player.position} 
+                        thumbTintColor={colors.primary} minimumTrackTintColor={colors.primary} maximumTrackTintColor={colors.text}
+                        onSlidingComplete={value => dispatch({ type: "TRACK_SEEK", payload: { sliderProgress: value } })} />
                     <View style={styles.containerText}>
-                        <Text style={{ color: colors.text }}>00:00</Text>
-                        <Text style={{ color: colors.text }}>03:00</Text>
+                        <Text style={{ color: colors.text }}>{formatTime(player.position)}</Text>
+                        <Text style={{ color: colors.text }}>{formatTime(player.duration)}</Text>
                     </View>
                 </View>
                 <View style={styles.containerControllers}>
-                    <Icon.Button name={"backward"} size={33} backgroundColor={"transparent"} borderRadius={50}
-                        marginHorizontal={-4} color={colors.text} />
-                    <Icon.Button name={"pause"} size={40} backgroundColor={colors.primary} color={"white"} 
-                        borderRadius={50} iconStyle={{ paddingVertical: 12, paddingLeft: 15, paddingRight: 6 }} />
-                    <Icon.Button name={"forward"} size={33} iconStyle={{ paddingHorizontal: 4 }} 
-                        backgroundColor={"transparent"} marginRight={-15} color={colors.text} borderRadius={50} />
+                    <Icon.Button name={"fast-rewind"} onPress={() => dispatch({ type: "TRACK_PREVIOUS" })} 
+                        borderRadius={50} size={50} marginRight={-8} underlayColor={"#C7C7C7"}
+                        color={colors.text} backgroundColor={"transparent"} />
+                    <Icon.Button name={(player.play ? "pause" : "play-arrow")} onPress={togglePlay} size={60}
+                        borderRadius={50} marginRight={-10} underlayColor={"#C7C7C7"} color={"white"} 
+                        backgroundColor={colors.primary} />
+                    <Icon.Button name={"fast-forward"} onPress={() => dispatch({ type: "TRACK_NEXT" })} size={50}
+                        borderRadius={50} marginRight={-10} underlayColor={"#C7C7C7"} color={colors.text} 
+                        backgroundColor={"transparent"} />
                 </View>
                 <View style={styles.containerOtherControllers}>
-                    <Icon.Button name={"rotate-left"} size={20} backgroundColor={"transparent"} 
-                        iconStyle={{ paddingVertical: 5 }} marginLeft={6} color={colors.text} borderRadius={50} />
-                    <Icon.Button name={"rotate-right"} size={20} backgroundColor={"transparent"} 
-                        iconStyle={{ paddingVertical: 5 }} marginLeft={6} color={colors.text} borderRadius={50} />
+                    <Icon.Button name={"rotate-left"} size={22} backgroundColor={"transparent"} marginLeft={8}
+                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP-BACKWARD", payload: { interval: 15 } })}
+                        color={colors.text} borderRadius={50} underlayColor={"#C7C7C7"} />
+                    <Icon.Button name={(player.volume ? "volume-up" : "volume-off")} size={22} marginLeft={8} 
+                        backgroundColor={"transparent"} color={colors.text} borderRadius={50} marginTop={8}
+                        onPress={() => dispatch({ type: "TRACK-VOLUME" })} underlayColor={"#C7C7C7"} />
+                    <Icon.Button name={"rotate-right"} size={22} backgroundColor={"transparent"} marginLeft={8}
+                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP-FORWARD", payload: { interval: 15 } })}
+                        color={colors.text} borderRadius={50} underlayColor={"#C7C7C7"} />
                 </View>
             </View>
         </View>
@@ -57,7 +82,7 @@ const styles = StyleSheet.create({
     containerOptions: {
         flexDirection: "row", 
         justifyContent: "space-between", 
-        paddingHorizontal: 10, 
+        paddingHorizontal: 5, 
         paddingVertical: 5
     },  
     containerTrackInfo: {
@@ -104,4 +129,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default memo(Player);
+export default connect(state => ({ player: state.Player }))(memo(Player));

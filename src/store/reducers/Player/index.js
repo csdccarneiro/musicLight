@@ -9,7 +9,7 @@ const DATA_INITIAL_PLAYER = {
     duration: 0,
     position: 0,
     play: false,
-    progress: 0,
+    volume: true,
     velocity: 0,
 };
 
@@ -20,17 +20,20 @@ const Player = (state = DATA_INITIAL_PLAYER, action) => {
             return state;
         break;
         case "TRACK_CHANGE":
-            return { ...state, id: action.music.id, title: action.music.title, 
-                subtitle: action.music.artist, icon: action.music.artwork };
+            return { ...state, id: action.payload.id, title: action.payload.title, 
+                    subtitle: action.payload.artist, icon: action.payload.artwork };
         break;
         case "TRACK_PLAY":
             TrackPlayer.play();
-            return { ...state, play: true };
+            return state;
         break;
         case "TRACK_PAUSE":
             TrackPlayer.pause();
-            return { ...state, play: false };
+            return state;
         break;
+        case "TRACK_STATE":
+            return { ...state, play: action.payload.play };
+        break;        
         case "TRACK_NEXT":
             TrackPlayer.skipToNext();
             return state;
@@ -40,7 +43,23 @@ const Player = (state = DATA_INITIAL_PLAYER, action) => {
             return state;
         break;
         case "TRACK_PROGRESS":
-            return { ...state, progress: action.progress, duration: action.duration };
+            return { ...state, position: action.payload.position, duration: action.payload.duration };
+        break;
+        case "TRACK_SEEK":
+            TrackPlayer.seekTo(action.payload.sliderProgress);
+            return state;
+        break;
+        case "JUMP-FORWARD":
+            TrackPlayer.seekTo(state.position + action.payload.interval);
+            return state;
+        break;
+        case "JUMP-BACKWARD":
+            TrackPlayer.seekTo(state.position - action.payload.interval);
+            return state;
+        break;
+        case "TRACK-VOLUME":
+            TrackPlayer.setVolume(Number(!state.volume));
+            return { ...state, volume: !state.volume };
         break;
         default: return state;
         break;

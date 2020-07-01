@@ -2,11 +2,11 @@ import React, { useState, useCallback } from 'react';
 import { View, FlatList, ActivityIndicator, StyleSheet, Text, TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ItemList, Overlay } from '../../../../components';
 
 function Music ({ app, dispatch }) {
-    
+
     const [ selected, setSelected ] = useState(new Map());
     const [ modal, setModal ] = useState({ visible: false, title: undefined });
     const { colors } = useTheme();
@@ -55,14 +55,14 @@ function Music ({ app, dispatch }) {
         return (
             <View style={{ ...styles.containerSelectOptions, display: (selected.size > 0 ? "flex" : "none"), 
                 backgroundColor: colors.primary }}>
-                <Icon.Button name={"th"} size={27} underlayColor={'#C7C7C7'} style={styles.iconItemSelected} 
+                <Icon.Button name={"view-comfy"} size={30} underlayColor={'#C7C7C7'} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} color={"white"} onPress={() => onSelect(app.localListMusic)} />
-                <Icon.Button name={"trash"} size={27} color={"white"} style={styles.iconItemSelected} 
+                <Icon.Button name={"delete"} size={30} color={"white"} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} />
                 <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>{selected.size}</Text>
-                <Icon.Button name={"share-alt"} size={27} color={"white"} style={styles.iconItemSelected} 
+                <Icon.Button name={"share"} size={30} color={"white"} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} />
-                <Icon.Button name={"plus"} size={27} color={"white"} style={styles.iconItemSelected} 
+                <Icon.Button name={"add"} size={30} color={"white"} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} />
             </View>
         );
@@ -89,7 +89,7 @@ function Music ({ app, dispatch }) {
                 extraData={{ selected, colors }}
                 renderItem={renderItems}
                 removeClippedSubviews={true}
-                keyExtractor={item => item.path}
+                keyExtractor={item => item.id}
             />
         </View>
     );

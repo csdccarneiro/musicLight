@@ -1,20 +1,27 @@
 import React, { memo } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
 
 function MiniPlayer({ navigation, player, dispatch }) {
 
     const { colors } = useTheme();
-
+    
     function ProgressBar() {
         return (
             <View style={styles.progress}>
-                <View style={{ flex: player.progress, backgroundColor: "red" }} />
-                <View style={{ flex: player.duration - player.progress, backgroundColor: "#C7C7C7" }} />
+                <View style={{ flex: player.position, backgroundColor: "red" }} />
+                <View style={{ flex: player.duration - player.position, backgroundColor: "transparent" }} />
             </View>
         )
+    }
+
+    function togglePlay() {
+        if(player.play)
+           dispatch({ type: "TRACK_PAUSE" });
+        else
+            dispatch({ type: "TRACK_PLAY" });
     }
 
     return (
@@ -27,9 +34,12 @@ function MiniPlayer({ navigation, player, dispatch }) {
                     <Text numberOfLines={1} style={styles.playerSubTitle}>{player.subtitle}</Text>
                 </View>
                 <View style={styles.containerControllers}>
-                    <Icon.Button name={"backward"} size={25} underlayColor={"#808080"} iconStyle={{ ...styles.icon, marginLeft: -5 }} onPress={() => dispatch({ type: "TRACK_PREVIOUS" })} color={"white"} backgroundColor={"transparent"} />
-                    <Icon.Button name={(player.play ? "pause" : "play")} size={33} underlayColor={"#808080"} iconStyle={styles.icon} onPress={() => dispatch({ type: (player.play ? "TRACK_PAUSE" : "TRACK_PLAY") })} color={"white"} backgroundColor={"transparent"} />
-                    <Icon.Button name={"forward"} size={25} underlayColor={"#808080"} iconStyle={{ ...styles.icon, marginRight: -5 }} onPress={() => dispatch({ type: "TRACK_NEXT" })} color={"white"} backgroundColor={"transparent"} />
+                    <Icon.Button name={(player.play ? "pause" : "play-arrow")} onPress={togglePlay} size={45}
+                        borderRadius={50} marginRight={-10} padding={6} backgroundColor={"transparent"} color={"white"}
+                        underlayColor={"#C7C7C7"} />
+                    <Icon.Button name={"fast-forward"} onPress={() => dispatch({ type: "TRACK_NEXT" })} size={30}
+                        borderRadius={50} marginRight={-10} padding={4} underlayColor={"#C7C7C7"} color={"white"} 
+                        backgroundColor={"transparent"} />
                 </View>
             </TouchableOpacity>
         </>
@@ -47,8 +57,7 @@ const styles = StyleSheet.create({
         flexDirection: "row", 
         alignItems: "center", 
         paddingLeft: 10,
-        paddingRight: 5, 
-        paddingVertical: 10
+        paddingRight: 5
     },
     image: {
         borderRadius: 5,
@@ -62,11 +71,6 @@ const styles = StyleSheet.create({
     containerControllers: {
         flexDirection: "row", 
         alignItems: "center"
-    },  
-    icon: {
-        marginRight: 0, 
-        marginTop: -5, 
-        marginBottom: -5
     },
     playerTitle: {
         fontSize: 16,

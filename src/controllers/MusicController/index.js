@@ -5,17 +5,20 @@ class MusicController {
     async initMusic (localMusics, musicId) {
 
         const listMusic = await TrackPlayer.getQueue();
+        
         if (listMusic.length != localMusics.length) {
-            await TrackPlayer.destroy();
+            await TrackPlayer.reset();
             this.addOrInitMusic(localMusics, musicId);
         }
-        else 
+        else {
             TrackPlayer.skip(musicId);
+            TrackPlayer.play();
+        }
         
     }
 
     addOrInitMusic(localMusics, musicId) {
-
+        
         if (localMusics.length > 0) {
             
             TrackPlayer.setupPlayer().then(() => {
@@ -31,13 +34,20 @@ class MusicController {
                 }));
 
                 TrackPlayer.updateOptions({
+                    stopWithApp: true,
+                    compactCapabilities: [
+                        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+                        TrackPlayer.CAPABILITY_PAUSE,
+                        TrackPlayer.CAPABILITY_PLAY,
+                        TrackPlayer.CAPABILITY_SKIP_TO_NEXT
+                    ],
                     capabilities: [
-                      TrackPlayer.CAPABILITY_JUMP_FORWARD,
-                      TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-                      TrackPlayer.CAPABILITY_PAUSE,
-                      TrackPlayer.CAPABILITY_PLAY,
-                      TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-                      TrackPlayer.CAPABILITY_JUMP_BACKWARD
+                       TrackPlayer.CAPABILITY_JUMP_BACKWARD,
+                       TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+                       TrackPlayer.CAPABILITY_PAUSE,
+                       TrackPlayer.CAPABILITY_PLAY,
+                       TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+                       TrackPlayer.CAPABILITY_JUMP_FORWARD
                     ]
                 });
 
