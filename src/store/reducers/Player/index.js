@@ -1,4 +1,3 @@
-import TrackPlayer from 'react-native-track-player';
 import controllers from "../../../controllers";
 
 const DATA_INITIAL_PLAYER = {
@@ -11,55 +10,64 @@ const DATA_INITIAL_PLAYER = {
     play: false,
     volume: true,
     velocity: 0,
+    reproduction: "repeat"
 };
 
 const Player = (state = DATA_INITIAL_PLAYER, action) => {
     switch (action.type) {
-        case "ADD_OR_INIT_MUSICS":
-            controllers.MusicController.initMusic(action.payload.localListMusic, action.payload.musicId);
+        case "INIT_MUSICS":
+            controllers.MusicController.initMusic(action.payload.localListMusic, state);
+            return state;
+        break;
+        case "TRACK_SELECT":
+            controllers.MusicController.selectTrack(action.payload.musicId);
             return state;
         break;
         case "TRACK_CHANGE":
             return { ...state, id: action.payload.id, title: action.payload.title, 
                     subtitle: action.payload.artist, icon: action.payload.artwork };
         break;
-        case "TRACK_PLAY":
-            TrackPlayer.play();
-            return state;
-        break;
-        case "TRACK_PAUSE":
-            TrackPlayer.pause();
+        case "TOGGLE_PLAY_PAUSE":
+            controllers.MusicController.togglePlayAndPause();
             return state;
         break;
         case "TRACK_STATE":
             return { ...state, play: action.payload.play };
         break;        
         case "TRACK_NEXT":
-            TrackPlayer.skipToNext();
+            controllers.MusicController.nextTrack();
             return state;
         break;
         case "TRACK_PREVIOUS":
-            TrackPlayer.skipToPrevious();
+            controllers.MusicController.previousTrack();
             return state;
         break;
         case "TRACK_PROGRESS":
             return { ...state, position: action.payload.position, duration: action.payload.duration };
         break;
         case "TRACK_SEEK":
-            TrackPlayer.seekTo(action.payload.sliderProgress);
+            controllers.MusicController.seekTrack(action.payload.sliderProgress);
             return state;
         break;
-        case "JUMP-FORWARD":
-            TrackPlayer.seekTo(state.position + action.payload.interval);
+        case "JUMP_FORWARD":
+            controllers.MusicController.seekTrack(state.position + action.payload.interval);
             return state;
         break;
-        case "JUMP-BACKWARD":
-            TrackPlayer.seekTo(state.position - action.payload.interval);
+        case "JUMP_BACKWARD":
+            controllers.MusicController.seekTrack(state.position - action.payload.interval);
             return state;
         break;
-        case "TRACK-VOLUME":
-            TrackPlayer.setVolume(Number(!state.volume));
+        case "TRACK_VOLUME":
+            controllers.MusicController.volumeTrack(Number(!state.volume));
             return { ...state, volume: !state.volume };
+        break;
+        case "TRACK_REPRODUCTION":
+            if(state.reproduction == "repeat")
+                return { ...state, reproduction: "repeat-one" };
+            else if(state.reproduction == "repeat-one")
+                return { ...state, reproduction: "shuffle" };
+            else
+                return { ...state, reproduction: "repeat" };
         break;
         default: return state;
         break;

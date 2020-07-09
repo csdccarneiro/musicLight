@@ -3,7 +3,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import createSagaMiddleware from 'redux-saga';
 import AsyncStorage from '@react-native-community/async-storage';
 import { App, Player } from './reducers';
-import root from './sagas';
+import { GetMusics, DeleteFile } from './sagas';
 
 //CONFIGURAÇÃO DE PERSISTÊNCIA
 const persisConfig = {
@@ -23,6 +23,7 @@ const store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
 
 const persistor = persistStore(store);
 
-sagaMiddleware.run(root);
+sagaMiddleware.run(GetMusics);
+sagaMiddleware.run(DeleteFile);
 
 export  { store, persistor };

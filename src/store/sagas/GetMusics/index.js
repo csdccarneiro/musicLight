@@ -1,10 +1,5 @@
-import GetMusics from "./GetMusics";
-import DeleteFile from "./DeleteFile";
-
-export { GetMusics, DeleteFile };
-
-/*import { takeEvery, put } from 'redux-saga/effects';
-import controllers from '../../controllers';
+import { takeEvery, put } from 'redux-saga/effects';
+import controllers from '../../../controllers';
 
 function* asyncGetMusics() {
 
@@ -17,5 +12,5 @@ function* asyncGetMusics() {
 
 export default function* root() {
     yield takeEvery("ASYNC_GET_MUSICS", asyncGetMusics);  
-}*/
+}
 

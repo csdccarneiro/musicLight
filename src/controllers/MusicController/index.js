@@ -1,23 +1,38 @@
 import TrackPlayer from 'react-native-track-player';
 
+
 class MusicController {
 
-    async initMusic (localMusics, musicId) {
+    //INICIANDO MÚSICA
+    async initMusic(localMusics, player) {
 
-        const listMusic = await TrackPlayer.getQueue();
+        var listMusic = await TrackPlayer.getQueue();
         
-        if (listMusic.length != localMusics.length) {
-            await TrackPlayer.reset();
-            this.addOrInitMusic(localMusics, musicId);
+        if (await TrackPlayer.getState() == TrackPlayer.STATE_STOPPED 
+            || await TrackPlayer.getState() == TrackPlayer.STATE_NONE) {
+            if (listMusic.length != localMusics.length) {
+                await TrackPlayer.reset();
+                this.addMusic(localMusics, player);
+            }
         }
-        else {
-            TrackPlayer.skip(musicId);
-            TrackPlayer.play();
-        }
-        
+
     }
 
-    addOrInitMusic(localMusics, musicId) {
+    async selectTrack(musicId) {
+
+        var currentIdTrack = await TrackPlayer.getCurrentTrack();
+
+        if (currentIdTrack == musicId)
+            this.togglePlayAndPause();
+        else {
+            await TrackPlayer.skip(musicId);
+            await TrackPlayer.play();
+        }
+
+    }
+
+    //ADICIONANDO MÚSICAS
+    addMusic(localMusics, player) {
         
         if (localMusics.length > 0) {
             
@@ -50,14 +65,88 @@ class MusicController {
                        TrackPlayer.CAPABILITY_JUMP_FORWARD
                     ]
                 });
-
+                
                 TrackPlayer.add(localMusics);
-                TrackPlayer.skip(musicId);
-                TrackPlayer.play();
+                
+                if (player.id) {
+                    TrackPlayer.skip(player.id);
+                    TrackPlayer.seekTo(player.position);
+                    TrackPlayer.setVolume(Number(player.volume));   
+                }
 
             });
 
         }
+
+    }
+
+    async removeTrackQueue(listIds: Array) {
+
+        const currentIdTrack = await TrackPlayer.getCurrentTrack(); 
+
+        var isIdInList = false;
+
+        listIds.map(item => {
+            if(String(currentIdTrack) == String(item))
+               isIdInList = true;
+        });
+
+        if (isIdInList) 
+            await TrackPlayer.skipToNext();
+
+        await TrackPlayer.remove(listIds);
+        
+        return true;
+
+    };
+
+    //PLAY E PAUSE
+    async togglePlayAndPause() {
+
+        if (await TrackPlayer.getState() == TrackPlayer.STATE_PLAYING)
+            await TrackPlayer.pause();
+        else if (await TrackPlayer.getState() == TrackPlayer.STATE_PAUSED) 
+            await TrackPlayer.play();
+    
+    }
+
+    //MÚSICA ANTERIOR
+    async previousTrack() {
+        
+        var currentIdTrack = await TrackPlayer.getCurrentTrack(); 
+        var listMusic = await TrackPlayer.getQueue();
+        
+        if (listMusic[0].id == currentIdTrack) 
+            await TrackPlayer.skip(listMusic[listMusic.length - 1].id);
+        else
+            await TrackPlayer.skipToPrevious();
+        
+    }
+
+    //PRÓXIMA MÚSICA
+    async nextTrack() {
+
+        var currentIdTrack = await TrackPlayer.getCurrentTrack(); 
+        var listMusic = await TrackPlayer.getQueue();
+
+        if (listMusic[listMusic.length - 1].id == currentIdTrack) 
+            await TrackPlayer.skip(listMusic[0].id);
+        else
+            await TrackPlayer.skipToNext();
+
+    }
+
+    //SETANDO PROGRESSÃO DA MÚSICA
+    async seekTrack(progress) {
+
+        await TrackPlayer.seekTo(progress);
+
+    }
+
+    //VOLUME DA MÚSICA
+    async volumeTrack(volume) {
+
+        await TrackPlayer.setVolume(volume);
 
     }
 

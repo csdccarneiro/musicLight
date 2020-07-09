@@ -17,13 +17,6 @@ function Player({ navigation, player, dispatch }) {
         .join(":").replace(/\b(\d)\b/g, "0$1")
     }
 
-    function togglePlay() {
-        if(player.play)
-           dispatch({ type: "TRACK_PAUSE" });
-        else
-            dispatch({ type: "TRACK_PLAY" });
-    }
-
     return (
         <View style={styles.container}>
             <View style={styles.containerOptions}>
@@ -51,23 +44,26 @@ function Player({ navigation, player, dispatch }) {
                     <Icon.Button name={"fast-rewind"} onPress={() => dispatch({ type: "TRACK_PREVIOUS" })} 
                         borderRadius={50} size={50} marginRight={-8} underlayColor={"#C7C7C7"}
                         color={colors.text} backgroundColor={"transparent"} />
-                    <Icon.Button name={(player.play ? "pause" : "play-arrow")} onPress={togglePlay} size={60}
-                        borderRadius={50} marginRight={-10} underlayColor={"#C7C7C7"} color={"white"} 
-                        backgroundColor={colors.primary} />
+                    <Icon.Button name={(player.play ? "pause" : "play-arrow")} size={60} borderRadius={50} 
+                        marginRight={-10} underlayColor={"#C7C7C7"} color={"white"} backgroundColor={colors.primary} 
+                        onPress={() => dispatch({ type: "TOGGLE_PLAY_PAUSE" })} />
                     <Icon.Button name={"fast-forward"} onPress={() => dispatch({ type: "TRACK_NEXT" })} size={50}
                         borderRadius={50} marginRight={-10} underlayColor={"#C7C7C7"} color={colors.text} 
                         backgroundColor={"transparent"} />
                 </View>
                 <View style={styles.containerOtherControllers}>
                     <Icon.Button name={"rotate-left"} size={22} backgroundColor={"transparent"} marginLeft={8}
-                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP-BACKWARD", payload: { interval: 15 } })}
+                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP_BACKWARD", payload: { interval: 15 } })}
                         color={colors.text} borderRadius={50} underlayColor={"#C7C7C7"} />
                     <Icon.Button name={(player.volume ? "volume-up" : "volume-off")} size={22} marginLeft={8} 
                         backgroundColor={"transparent"} color={colors.text} borderRadius={50} marginTop={8}
-                        onPress={() => dispatch({ type: "TRACK-VOLUME" })} underlayColor={"#C7C7C7"} />
+                        onPress={() => dispatch({ type: "TRACK_VOLUME" })} underlayColor={"#C7C7C7"} />
                     <Icon.Button name={"rotate-right"} size={22} backgroundColor={"transparent"} marginLeft={8}
-                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP-FORWARD", payload: { interval: 15 } })}
+                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP_FORWARD", payload: { interval: 15 } })}
                         color={colors.text} borderRadius={50} underlayColor={"#C7C7C7"} />
+                    <Icon.Button name={player.reproduction} size={22} backgroundColor={"transparent"} marginLeft={8}
+                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "TRACK_REPRODUCTION" })}
+                        color={colors.primary} borderRadius={50} underlayColor={"#C7C7C7"} />
                 </View>
             </View>
         </View>

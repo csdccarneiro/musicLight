@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet, Text, TouchableHighlight } from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { View, FlatList, ActivityIndicator, StyleSheet, Text, TouchableHighlight, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,7 +10,11 @@ function Music ({ app, dispatch }) {
     const [ selected, setSelected ] = useState(new Map());
     const [ modal, setModal ] = useState({ visible: false, title: undefined });
     const { colors } = useTheme();
-    
+
+    useEffect(() => {
+        dispatch({ type: "INIT_MUSICS", payload: { localListMusic: app.localListMusic } })
+    }, []);
+
     const onSelect = useCallback(musicId => {
         const newSelected = new Map(selected);
         if(Array.isArray(musicId)) 
@@ -23,11 +27,32 @@ function Music ({ app, dispatch }) {
     }, [selected]);
 
     const onItemPress = useCallback(musicId => {
-        dispatch({ type: "ADD_OR_INIT_MUSICS", payload: { localListMusic: app.localListMusic, musicId } });
+        dispatch({ type: "TRACK_SELECT", payload: { musicId } });
     }, []);
 
-    const onItemOptions = useCallback(item => {
-        setModal({ visible: (item.title ? true : false), title: item.title });
+    const onItemOptions = useCallback(({ title }) => setModal({ visible: (title ? true : false), title }), []);
+
+    const shareFile = useCallback(item => {
+        var itemSelect = app.localListMusic.filter(music => {
+            if ((item.size && item.has(music.id)) || music.fileName == item.title) 
+                return music;
+        });
+        dispatch({ type: "SHARE_FILE", payload: { items: itemSelect } });
+    }, []);
+
+    const deleteFile = useCallback(item => {
+        Alert.alert("Excluir", "Deseja mesmo remover?", [
+            { text: "Não", style: "cancel" },
+            { text: "Sim", onPress: () => {
+                var itemSelect = app.localListMusic.filter(music => {
+                    if ((item.size && item.has(music.id)) || music.fileName == item.title) 
+                        return music;
+                });
+                dispatch({ type: "ASYNC_DELETE_FILE", payload: { localListMusic: app.localListMusic, 
+                    items: itemSelect } });
+              } 
+            }
+        ], { cancelable: true });
     }, []);
 
     function renderItems({ item }) {
@@ -58,10 +83,10 @@ function Music ({ app, dispatch }) {
                 <Icon.Button name={"view-comfy"} size={30} underlayColor={'#C7C7C7'} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} color={"white"} onPress={() => onSelect(app.localListMusic)} />
                 <Icon.Button name={"delete"} size={30} color={"white"} style={styles.iconItemSelected} 
-                    backgroundColor={"transparent"} />
+                    backgroundColor={"transparent"} onPress={() => deleteFile(selected)} />
                 <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>{selected.size}</Text>
                 <Icon.Button name={"share"} size={30} color={"white"} style={styles.iconItemSelected} 
-                    backgroundColor={"transparent"} />
+                    backgroundColor={"transparent"} onPress={() => shareFile(selected)} />
                 <Icon.Button name={"add"} size={30} color={"white"} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} />
             </View>
@@ -74,8 +99,8 @@ function Music ({ app, dispatch }) {
             <Overlay isVisible={modal.visible} animation={'fade'} style={styles.modal} onClose={onItemOptions}>
                 <Text style={styles.titleModal}>{modal.title}</Text>
                 <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => alert('Olá')}><Text style={styles.textModalOptions}>Adicionar a playlist</Text></TouchableHighlight>
-                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => alert('Olá')}><Text style={styles.textModalOptions}>Compartilhar</Text></TouchableHighlight>
-                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => alert('Olá')}><Text style={styles.textModalOptions}>Excluir</Text></TouchableHighlight>
+                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => shareFile(modal)}><Text style={styles.textModalOptions}>Compartilhar</Text></TouchableHighlight>
+                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => deleteFile(modal)}><Text style={styles.textModalOptions}>Excluir</Text></TouchableHighlight>
                 <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => alert('Olá')}><Text style={styles.textModalOptions}>Detalhes</Text></TouchableHighlight>
             </Overlay>
             <FlatList

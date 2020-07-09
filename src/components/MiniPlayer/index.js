@@ -17,32 +17,26 @@ function MiniPlayer({ navigation, player, dispatch }) {
         )
     }
 
-    function togglePlay() {
-        if(player.play)
-           dispatch({ type: "TRACK_PAUSE" });
-        else
-            dispatch({ type: "TRACK_PLAY" });
-    }
-
     return (
-        <>
+        <View style={{ display: (player.id ? "flex" : "none") }}>
             <ProgressBar />
-            <TouchableOpacity onPress={() => navigation.navigate("Player")} style={{ ...styles.container, backgroundColor: colors.primary }}>
+            <TouchableOpacity onPress={() => navigation.navigate("Player")} style={{ ...styles.container, 
+                backgroundColor: colors.primary }}>
                 <Image source={{ uri: player.icon }} style={styles.image} />
                 <View style={styles.containerText}> 
                     <Text numberOfLines={1} style={styles.playerTitle}>{player.title}</Text>
                     <Text numberOfLines={1} style={styles.playerSubTitle}>{player.subtitle}</Text>
                 </View>
                 <View style={styles.containerControllers}>
-                    <Icon.Button name={(player.play ? "pause" : "play-arrow")} onPress={togglePlay} size={45}
-                        borderRadius={50} marginRight={-10} padding={6} backgroundColor={"transparent"} color={"white"}
-                        underlayColor={"#C7C7C7"} />
+                    <Icon.Button name={(player.play ? "pause" : "play-arrow")} size={45} color={"white"}
+                        borderRadius={50} marginRight={-10} padding={6} backgroundColor={"transparent"} 
+                        onPress={() => dispatch({ type: "TOGGLE_PLAY_PAUSE" })} underlayColor={"#C7C7C7"} />
                     <Icon.Button name={"fast-forward"} onPress={() => dispatch({ type: "TRACK_NEXT" })} size={30}
                         borderRadius={50} marginRight={-10} padding={4} underlayColor={"#C7C7C7"} color={"white"} 
                         backgroundColor={"transparent"} />
                 </View>
             </TouchableOpacity>
-        </>
+        </View>
     );
 
 }

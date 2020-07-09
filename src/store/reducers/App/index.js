@@ -1,3 +1,4 @@
+import controllers from "../../../controllers";
 
 const DATA_INITIAL_APP = {
     dark: false,
@@ -10,6 +11,13 @@ const App = (state = DATA_INITIAL_APP, action) => {
     switch (action.type) {
         case "CHANGE_THEME":
             return { ...state, dark: !state.dark };
+        break;
+        case "SHARE_FILE":
+            controllers.AppController.shareFile(action.payload.items);
+            return state;
+        break;
+        case "DELETE_FILE":
+            return { ...state, localListMusic: action.payload.localListMusic };
         break;
         case "GET_MUSICS":
             if(action.payload.localListMusic.length != state.localListMusic.length) {
