@@ -20,18 +20,8 @@ const App = (state = DATA_INITIAL_APP, action) => {
             return { ...state, localListMusic: action.payload.localListMusic };
         break;
         case "GET_MUSICS":
-            if(action.payload.localListMusic.length != state.localListMusic.length) {
-                var localListMusic = action.payload.localListMusic.map(track => {
-                    track.fileName = track.fileName.replace(/\.[^/.]+$/, "");
-                    track.title = (track.title ? track.title : "Artista desconhecido");
-                    track.cover = (track.cover ? track.cover : state.icon_music);
-                    return track;
-                });
-                return { ...state, localListMusic: localListMusic, 
-                    widthItems: action.payload.widthItems };
-            }
-            else 
-                return state;
+            return { ...state, localListMusic: action.payload.localListMusic, 
+                widthItems: action.payload.widthItems };
         break;
         default: return state;
         break;

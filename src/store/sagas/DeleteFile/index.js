@@ -3,14 +3,13 @@ import controllers from '../../../controllers';
 
 function* asyncDeleteFile(action) {
 
-    const musics = yield controllers.AppController.deleteFile(action.payload.localListMusic, 
-        action.payload.items);
+    const musics = yield controllers.AppController.deleteFile(action.payload);
     
     if (musics.ids) {        
         
         const tracks = yield controllers.MusicController.removeTrackQueue(musics.ids);
 
-        yield put({ type: "DELETE_FILE", payload: { localListMusic: musics.localListMusic } });      
+        yield put({ type: "DELETE_FILE", payload: { localListMusic: musics.newListMusic } });      
 
     }
 

@@ -7,15 +7,19 @@ class MusicController {
     async initMusic(localMusics, player) {
 
         var listMusic = await TrackPlayer.getQueue();
-        
-        if (await TrackPlayer.getState() == TrackPlayer.STATE_STOPPED 
-            || await TrackPlayer.getState() == TrackPlayer.STATE_NONE) {
+
+        if (this.getStatePlayer()) {
             if (listMusic.length != localMusics.length) {
                 await TrackPlayer.reset();
                 this.addMusic(localMusics, player);
             }
         }
 
+    }
+
+    async getStatePlayer() {
+        return await TrackPlayer.getState() == TrackPlayer.STATE_STOPPED 
+        || await TrackPlayer.getState() == TrackPlayer.STATE_NONE;
     }
 
     async selectTrack(musicId) {
@@ -45,6 +49,7 @@ class MusicController {
                     duration: music.duration,
                     title: music.fileName,
                     artist: music.title,
+                    rating: music.rating,
                     artwork: music.cover
                 }));
 
@@ -82,21 +87,25 @@ class MusicController {
 
     async removeTrackQueue(listIds: Array) {
 
-        const currentIdTrack = await TrackPlayer.getCurrentTrack(); 
+        if (!this.getStatePlayer()) {
+            
+            const currentIdTrack = await TrackPlayer.getCurrentTrack(); 
 
-        var isIdInList = false;
+            var isIdInList = false;
+    
+            listIds.map(item => {
+                if(String(currentIdTrack) == String(item))
+                   isIdInList = true;
+            });
+    
+            if (isIdInList) 
+                await TrackPlayer.skipToNext();
+    
+            await TrackPlayer.remove(listIds);
+            
+            return true;
 
-        listIds.map(item => {
-            if(String(currentIdTrack) == String(item))
-               isIdInList = true;
-        });
-
-        if (isIdInList) 
-            await TrackPlayer.skipToNext();
-
-        await TrackPlayer.remove(listIds);
-        
-        return true;
+        }
 
     };
 

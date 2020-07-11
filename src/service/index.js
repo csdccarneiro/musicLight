@@ -22,7 +22,7 @@ export default async function() {
 
     TrackPlayer.addEventListener("playback-track-changed", async (event) => {
         const music = await TrackPlayer.getTrack(event.nextTrack);
-        if (music)
+        if (await TrackPlayer.getState() !== TrackPlayer.STATE_PAUSED && music) 
             store.dispatch({ type: "TRACK_CHANGE", payload: music });
     });
 

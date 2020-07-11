@@ -1,12 +1,14 @@
 import { takeEvery, put } from 'redux-saga/effects';
 import controllers from '../../../controllers';
 
-function* asyncGetMusics() {
+function* asyncGetMusics(action) {
 
-    const musics = yield controllers.AppController.verifyOrSendPermission();
+    const musics = yield controllers.AppController.verifyOrSendPermission(action.payload);
 
-    yield put({ type: "GET_MUSICS", payload: { localListMusic: (musics.localListMusic ? 
-        musics.localListMusic : []), widthItems: musics.widthItems } });
+    if (musics) {
+        yield put({ type: "GET_MUSICS", payload: { localListMusic: musics.localListMusic, 
+            widthItems: musics.widthItems } });        
+    }
 
 } 
 

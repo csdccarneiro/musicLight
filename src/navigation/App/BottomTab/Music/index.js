@@ -13,7 +13,11 @@ function Music ({ app, dispatch }) {
 
     useEffect(() => {
         dispatch({ type: "INIT_MUSICS", payload: { localListMusic: app.localListMusic } })
-    }, []);
+    }, [app.localListMusic]);
+
+    const getItemsSelected = useCallback(items => {
+        return app.localListMusic.filter(music => (items.size && items.has(music.id) || music.fileName == items.title ? music : undefined));
+    }, [app.localListMusic]);
 
     const onSelect = useCallback(musicId => {
         const newSelected = new Map(selected);
@@ -26,34 +30,17 @@ function Music ({ app, dispatch }) {
         setSelected(newSelected);
     }, [selected]);
 
-    const onItemPress = useCallback(musicId => {
-        dispatch({ type: "TRACK_SELECT", payload: { musicId } });
-    }, []);
+    const onItemPress = useCallback(musicId => dispatch({ type: "TRACK_SELECT", payload: { musicId } }), []);
 
     const onItemOptions = useCallback(({ title }) => setModal({ visible: (title ? true : false), title }), []);
 
-    const shareFile = useCallback(item => {
-        var itemSelect = app.localListMusic.filter(music => {
-            if ((item.size && item.has(music.id)) || music.fileName == item.title) 
-                return music;
-        });
-        dispatch({ type: "SHARE_FILE", payload: { items: itemSelect } });
-    }, []);
+    const shareFile = useCallback(item => dispatch({ type: "SHARE_FILE", payload: { items: getItemsSelected(item) } }), []);
 
     const deleteFile = useCallback(item => {
-        Alert.alert("Excluir", "Deseja mesmo remover?", [
-            { text: "Não", style: "cancel" },
-            { text: "Sim", onPress: () => {
-                var itemSelect = app.localListMusic.filter(music => {
-                    if ((item.size && item.has(music.id)) || music.fileName == item.title) 
-                        return music;
-                });
-                dispatch({ type: "ASYNC_DELETE_FILE", payload: { localListMusic: app.localListMusic, 
-                    items: itemSelect } });
-              } 
-            }
-        ], { cancelable: true });
-    }, []);
+        Alert.alert("Excluir", "Deseja mesmo remover?", [{ text: "Não", style: "cancel" }, { text: "Sim", 
+            onPress: () => dispatch({ type: "ASYNC_DELETE_FILE", payload: { localListMusic: app.localListMusic, 
+                    items: getItemsSelected(item) } }) }], { cancelable: true });
+    }, [app.localListMusic]);
 
     function renderItems({ item }) {
 
