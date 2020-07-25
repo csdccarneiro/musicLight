@@ -2,12 +2,13 @@ import React, { memo } from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { connect } from 'react-redux';
-import { useTheme } from '@react-navigation/native';
+import { useTheme, useNavigation } from '@react-navigation/native';
 
-function MiniPlayer({ navigation, player, dispatch }) {
+function MiniPlayer({ player, dispatch }) {
 
     const { colors } = useTheme();
-    
+    const navigation = useNavigation();
+
     function ProgressBar() {
         return (
             <View style={styles.progress}>
@@ -28,6 +29,10 @@ function MiniPlayer({ navigation, player, dispatch }) {
                     <Text numberOfLines={1} style={styles.playerSubTitle}>{player.subtitle}</Text>
                 </View>
                 <View style={styles.containerControllers}>
+                    <Icon.Button name={(player.rating ? "favorite" : "favorite-border")} 
+                        onPress={() => dispatch({ type: "ASYNC_FAVORITE_MUSIC", payload: { musicId: player.id } })} 
+                        size={30} borderRadius={50} marginRight={-10} marginTop={1} padding={5} underlayColor={"#C7C7C7"} 
+                        color={"white"} backgroundColor={"transparent"} />
                     <Icon.Button name={(player.play ? "pause" : "play-arrow")} size={45} color={"white"}
                         borderRadius={50} marginRight={-10} padding={6} backgroundColor={"transparent"} 
                         onPress={() => dispatch({ type: "TOGGLE_PLAY_PAUSE" })} underlayColor={"#C7C7C7"} />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { PermissionsAndroid, BackHandler, Dimensions } from 'react-native';
+import { PermissionsAndroid, BackHandler, Dimensions, ToastAndroid } from 'react-native';
 import MusicFiles from "react-native-get-music-files";
 import RNFetchBlob from 'rn-fetch-blob';
 import Share from "react-native-share";
@@ -20,29 +20,23 @@ class AppController {
 
     shareFile(itemsSelected: Array) {
 
-        const files = itemsSelected.map(async ({ path }) => "data:audio/mpeg;base64," + await RNFetchBlob.fs.readFile(path, 'base64'));
-
-        Promise.all(files).then(data => {
-            Share.open({ title: "Músicas", urls: data, type: "application/zip" })
-            .then(() => alert("Compartilhado com sucesso!"))
-            .catch(() => {});
-        });
-
+        let files = itemsSelected.map(item => "file://" + item.path);
+        
+        Share.open({ title: "Músicas", urls: files, type: "application/zip" })
+        .then(() => ToastAndroid.show("Compartilhado com sucesso!", ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50))
+        .catch(() => ToastAndroid.show("Não foi possível a compartilhar.", ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50));
+    
     }
 
-    async deleteFile(appState: Object) {
+    async deleteFile(localListMusic: Array, itemsSelected: Array) {
         
-        const { localListMusic, items } = appState;
-        
-        const promiseFiles = items.map(item => RNFetchBlob.fs.unlink(item.path));
-        
-        await Promise.all(promiseFiles);
+        let promiseFiles = await Promise.all(itemsSelected.map(item => RNFetchBlob.fs.unlink(item.path)));
 
-        var mapItems = new Map();
+        let mapItems = new Map();
 
-        var idsTracks = items.map(item => { mapItems.set(item.id, true); return item.id; });
+        let idsTracks = itemsSelected.map(item => { mapItems.set(item.id, true); return item.id; });
 
-        var newListMusic = localListMusic.filter(item => { 
+        let newListMusic = localListMusic.filter(item => { 
             if (!mapItems.has(item.id))
                 return item;
         });
@@ -51,9 +45,19 @@ class AppController {
 
     }
 
+    addFavorite(localListMusic: Array, musicId: String) {
+
+        return localListMusic.map(item => {
+            if(item.id == musicId)
+               item.rating = !item.rating;
+            return item;
+        });
+
+    }
+
     async getMusics(appState) {
 
-        var localListMusic = await MusicFiles.getAll({
+        let localListMusic = await MusicFiles.getAll({
             artist: true,
             duration: true,
             id: true,
@@ -64,18 +68,20 @@ class AppController {
             fields: ['title','artwork','duration','artist','genre','lyrics','albumTitle']
         });
 
-        var widthItems = (Dimensions.get("window").width / 2) * 0.8;
+        let widthItems = (Dimensions.get("window").width / 2) * 0.8;
 
         if (appState.localListMusic.length != localListMusic.length) {
             
-            var trackIds = new Map();
+            let trackIds = new Map();
 
             appState.localListMusic.map(track => trackIds.set(track.id, true));
 
-            var trackNoList = localListMusic.filter(track => {
+            let trackNoList = localListMusic.filter(track => {
                 if(!trackIds.has(track.id)) {
                     track.fileName = track.fileName.replace(/\.[^/.]+$/, "");
                     track.title = (track.title ? track.title : "Artista desconhecido");
+                    track.album = (track.album ? track.album : "Album desconhecido");
+                    track.author = (track.author ? track.author : "Autor desconhecido");
                     track.rating = false;
                     track.cover = (track.cover ? track.cover : appState.icon_music);
                     return track;

@@ -35,6 +35,22 @@ class MusicController {
 
     }
 
+    async addTrackFavorite(musicId) {
+
+        let track = await TrackPlayer.getTrack(musicId);
+        
+        if (track) {
+
+            track.rating = !track.rating;
+
+            await TrackPlayer.updateMetadataForTrack(musicId, track);
+            
+            return { rating: track.rating };   
+
+        }
+
+    }
+
     //ADICIONANDO MÚSICAS
     addMusic(localMusics, player) {
         
@@ -93,10 +109,7 @@ class MusicController {
 
             var isIdInList = false;
     
-            listIds.map(item => {
-                if(String(currentIdTrack) == String(item))
-                   isIdInList = true;
-            });
+            listIds.map(item => { if(String(currentIdTrack) == item) isIdInList = true; });
     
             if (isIdInList) 
                 await TrackPlayer.skipToNext();

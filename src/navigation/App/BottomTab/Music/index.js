@@ -1,62 +1,52 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet, Text, TouchableHighlight, Alert } from 'react-native';
+import React, { useState, useCallback } from 'react';
+import { View, FlatList, ActivityIndicator, StyleSheet, Text } from 'react-native';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { ItemList, Overlay } from '../../../../components';
+import { ItemList } from '../../../../components';
 
-function Music ({ app, dispatch }) {
+function Music ({ app, dispatch, navigation }) {
 
     const [ selected, setSelected ] = useState(new Map());
-    const [ modal, setModal ] = useState({ visible: false, title: undefined });
     const { colors } = useTheme();
 
-    useEffect(() => {
-        dispatch({ type: "INIT_MUSICS", payload: { localListMusic: app.localListMusic } })
-    }, [app.localListMusic]);
+    const getMultiItemsSelected = useCallback(items => {
+        return app.localListMusic.filter(music => (items.has(music.id) ? music : undefined));
+    },[app.localListMusic]);
 
-    const getItemsSelected = useCallback(items => {
-        return app.localListMusic.filter(music => (items.size && items.has(music.id) || music.fileName == items.title ? music : undefined));
-    }, [app.localListMusic]);
-
-    const onSelect = useCallback(musicId => {
+    const onSelect = useCallback(items => {
         const newSelected = new Map(selected);
-        if(Array.isArray(musicId)) 
-            (newSelected.size == musicId.length ? newSelected.clear() : 
-            musicId.map(music => newSelected.set(music.id, true)));
+        if(Array.isArray(items)) 
+            (newSelected.size == items.length ? newSelected.clear() : items.map(music => newSelected.set(music.id, true)));
         else 
-            (!newSelected.has(musicId) ? newSelected.set(musicId, true) : 
-            newSelected.delete(musicId));
+            (!newSelected.has(items.id) ? newSelected.set(items.id, true) : newSelected.delete(items.id));
         setSelected(newSelected);
     }, [selected]);
+    
+    const onItemPress = useCallback(item => {
+        if(selected.size > 0)
+            onSelect(item);
+        else 
+            dispatch({ type: "TRACK_SELECT", payload: { musicId: item.id } });
+    }, [selected]);
 
-    const onItemPress = useCallback(musicId => dispatch({ type: "TRACK_SELECT", payload: { musicId } }), []);
-
-    const onItemOptions = useCallback(({ title }) => setModal({ visible: (title ? true : false), title }), []);
-
-    const shareFile = useCallback(item => dispatch({ type: "SHARE_FILE", payload: { items: getItemsSelected(item) } }), []);
-
-    const deleteFile = useCallback(item => {
-        Alert.alert("Excluir", "Deseja mesmo remover?", [{ text: "Não", style: "cancel" }, { text: "Sim", 
-            onPress: () => dispatch({ type: "ASYNC_DELETE_FILE", payload: { localListMusic: app.localListMusic, 
-                    items: getItemsSelected(item) } }) }], { cancelable: true });
-    }, [app.localListMusic]);
+    const onItemOptions = useCallback(item => {
+        if(selected.size <= 0)
+            navigation.navigate("Modal", { screen: 'Options', params: { app, item } });
+    }, [app.localListMusic, selected]);
 
     function renderItems({ item }) {
 
         return (
             <ItemList 
-                id={item.id}
-                title={item.fileName}
-                subtitle={item.title}
-                icon={item.cover}
-                colorSelected={colors.primary}
+                item={item}
+                backgroundSelected={colors.primary}
                 colorText={colors.text}
                 widthItem={app.widthItems}
                 onItemPress={onItemPress}
                 optionsVisible={onItemOptions}
                 onSelect={onSelect} 
-                selected={selected}
+                selected={selected.has(item.id)}
             />
         );
 
@@ -69,13 +59,14 @@ function Music ({ app, dispatch }) {
                 backgroundColor: colors.primary }}>
                 <Icon.Button name={"view-comfy"} size={30} underlayColor={'#C7C7C7'} style={styles.iconItemSelected} 
                     backgroundColor={"transparent"} color={"white"} onPress={() => onSelect(app.localListMusic)} />
-                <Icon.Button name={"delete"} size={30} color={"white"} style={styles.iconItemSelected} 
-                    backgroundColor={"transparent"} onPress={() => deleteFile(selected)} />
+                <Icon.Button onPress={() => dispatch({ type: "SHARE_FILE", payload: { items: getMultiItemsSelected(selected) } })}
+                    name={"delete"} size={30} color={"white"} style={styles.iconItemSelected} backgroundColor={"transparent"} />
                 <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>{selected.size}</Text>
-                <Icon.Button name={"share"} size={30} color={"white"} style={styles.iconItemSelected} 
-                    backgroundColor={"transparent"} onPress={() => shareFile(selected)} />
-                <Icon.Button name={"add"} size={30} color={"white"} style={styles.iconItemSelected} 
-                    backgroundColor={"transparent"} />
+                <Icon.Button onPress={() => dispatch({ type: "SHARE_FILE", payload: { items: getMultiItemsSelected(selected) } })}
+                    name={"share"} size={30} color={"white"} style={styles.iconItemSelected} backgroundColor={"transparent"} />
+                <Icon.Button onPress={() => navigation.navigate("Modal", { screen: 'Playlist', 
+                    params: { playList: app.playList, item: getMultiItemsSelected(selected) } })} color={"white"} 
+                    name={"add"} size={30} style={styles.iconItemSelected} backgroundColor={"transparent"} />
             </View>
         );
 
@@ -83,13 +74,6 @@ function Music ({ app, dispatch }) {
 
     return (
         <View>
-            <Overlay isVisible={modal.visible} animation={'fade'} style={styles.modal} onClose={onItemOptions}>
-                <Text style={styles.titleModal}>{modal.title}</Text>
-                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => alert('Olá')}><Text style={styles.textModalOptions}>Adicionar a playlist</Text></TouchableHighlight>
-                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => shareFile(modal)}><Text style={styles.textModalOptions}>Compartilhar</Text></TouchableHighlight>
-                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => deleteFile(modal)}><Text style={styles.textModalOptions}>Excluir</Text></TouchableHighlight>
-                <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => alert('Olá')}><Text style={styles.textModalOptions}>Detalhes</Text></TouchableHighlight>
-            </Overlay>
             <FlatList
                 data={app.localListMusic}
                 initialNumToRender={5}
@@ -98,7 +82,7 @@ function Music ({ app, dispatch }) {
                 stickyHeaderIndices={[0]}
                 ListEmptyComponent={<ActivityIndicator size={"large"} color={colors.primary} />}
                 numColumns={2}
-                extraData={{ selected, colors }}
+                extraData={selected}
                 renderItem={renderItems}
                 removeClippedSubviews={true}
                 keyExtractor={item => item.id}
@@ -109,18 +93,6 @@ function Music ({ app, dispatch }) {
 }
 
 const styles = StyleSheet.create({
-    modal: {
-        marginHorizontal: 30, 
-        backgroundColor: "white"
-    },
-    titleModal: {
-        fontSize: 17, 
-        textAlign: "center", 
-        paddingHorizontal: 15, 
-        fontFamily: "sans-serif-medium",
-        paddingVertical: 15, 
-        fontWeight: "bold"
-    },
     listContent: {
         justifyContent: "space-between", 
         paddingTop: 10,
@@ -136,10 +108,6 @@ const styles = StyleSheet.create({
     iconItemSelected: {
         backgroundColor: "transparent", 
         marginRight: -9
-    },
-    textModalOptions: {
-        padding: 15, 
-        fontSize: 15
     }
 });
 

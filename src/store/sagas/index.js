@@ -1,7 +1,8 @@
 import GetMusics from "./GetMusics";
 import DeleteFile from "./DeleteFile";
+import FavoriteMusic from "./FavoriteMusic";
 
-export { GetMusics, DeleteFile };
+export { GetMusics, DeleteFile, FavoriteMusic };
 
 /*import { takeEvery, put } from 'redux-saga/effects';
 import controllers from '../../controllers';

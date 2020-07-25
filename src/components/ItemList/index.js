@@ -2,32 +2,27 @@ import React, { memo } from 'react';
 import { Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 interface ItemListProps {
-    id: String,
-    title: String,
-    subtitle: String,
-    icon: String,
-    colorSelected: String,
+    item: Object,
+    backgroundSelected: String,
     widthItem: Number,
     onItemPress: Function,
     optionsVisible: Function,
     onSelect: Function,
-    selected: Map
+    selected: Boolean
 }
 
-function ItemList({ id, title, subtitle, icon, colorSelected, colorText, widthItem,
+function ItemList({ item, backgroundSelected, colorText, widthItem,
         onItemPress, optionsVisible, onSelect, selected }: ItemListProps) {
-    
-    const isSelected = selected.has(id);
-    
+
     return (
-        <TouchableOpacity onPress={() => { selected.size > 0 ? onSelect(id) : onItemPress(id) }} 
-            style={{ ...styles.button, width: widthItem, backgroundColor: (isSelected ? colorSelected : null) }} 
-            onLongPress={() => { if(selected.size <= 0) onSelect(id) }}>
-            <Image source={{ uri: icon }} style={styles.image} />
+        <TouchableOpacity onPress={() => onItemPress(item)} 
+            style={{ ...styles.button, width: widthItem, backgroundColor: (selected ? backgroundSelected : null) }} 
+            onLongPress={() => onSelect(item)}>
+            <Image source={{ uri: item.cover }} style={styles.image} />
             <TouchableOpacity style={styles.containerText} 
-                onLongPress={() => { if(selected.size <= 0) optionsVisible({ title }) }}>
-                <Text numberOfLines={1} style={{ ...styles.title, color: (!isSelected ? colorText : "white") }}>{title}</Text>
-                <Text numberOfLines={1} style={{ ...styles.subtitle, color: (!isSelected ? colorText : "white") }}>{subtitle}</Text>
+                onLongPress={() => optionsVisible(item)}>
+                <Text numberOfLines={1} style={{ ...styles.title, color: (!selected ? colorText : "white") }}>{item.fileName}</Text>
+                <Text numberOfLines={1} style={{ ...styles.subtitle, color: (!selected ? colorText : "white") }}>{item.title}</Text>
             </TouchableOpacity>
         </TouchableOpacity>
     );

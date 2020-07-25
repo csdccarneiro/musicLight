@@ -20,14 +20,17 @@ const Player = (state = DATA_INITIAL_PLAYER, action) => {
             controllers.MusicController.initMusic(action.payload.localListMusic, state);
             return state;
         break;
+        case "TRACK_FAVORITE":
+            return { ...state, rating: action.payload.rating };
+        break;
         case "TRACK_SELECT":
             controllers.MusicController.selectTrack(action.payload.musicId);
             return state;
         break;
         case "TRACK_CHANGE":
-            console.log(action.payload);
             return { ...state, id: action.payload.id, title: action.payload.title, 
-                    subtitle: action.payload.artist, icon: action.payload.artwork };
+                subtitle: action.payload.artist, icon: action.payload.artwork,
+                rating: action.payload.rating };
         break;
         case "TOGGLE_PLAY_PAUSE":
             controllers.MusicController.togglePlayAndPause();

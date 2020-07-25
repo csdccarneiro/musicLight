@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 //TELA INICIAL
 import BottomTab from './BottomTab';
+import Modal from './Modal';
 import Player from './Player'; 
 
 //TEMAS
@@ -21,8 +22,9 @@ function AppContainer({ app, dispatch }) {
     
     return (
         <NavigationContainer theme={app.dark ? THEMES.Dark : THEMES.Light}>
-            <Stack.Navigator screenOptions={{ headerShown: false }}  >
+            <Stack.Navigator screenOptions={{ headerShown: false }} >
                 <Stack.Screen name={"Home"} component={BottomTab} />
+                <Stack.Screen name={"Modal"} component={Modal} options={{ stackPresentation: "transparentModal" }} />
                 <Stack.Screen name={"Player"} component={Player} />
             </Stack.Navigator>
         </NavigationContainer>

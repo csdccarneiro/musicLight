@@ -3,11 +3,19 @@ import controllers from '../../../controllers';
 
 function* asyncGetMusics(action) {
 
-    const musics = yield controllers.AppController.verifyOrSendPermission(action.payload);
+    if (action.payload.localListMusic.length > 0) 
+        yield put({ type: "INIT_MUSICS", payload: { localListMusic: action.payload.localListMusic } });
 
+    const musics = yield controllers.AppController.verifyOrSendPermission(action.payload);
+    
     if (musics) {
+
+        if (action.payload.localListMusic.length != musics.localListMusic.length) 
+            yield put({ type: "INIT_MUSICS", payload: { localListMusic: musics.localListMusic } });
+        
         yield put({ type: "GET_MUSICS", payload: { localListMusic: musics.localListMusic, 
-            widthItems: musics.widthItems } });        
+            widthItems: musics.widthItems } });     
+               
     }
 
 } 

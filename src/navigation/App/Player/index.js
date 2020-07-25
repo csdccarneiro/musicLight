@@ -64,9 +64,9 @@ function Player({ navigation, player, dispatch }) {
                     <Icon.Button name={"rotate-right"} size={22} backgroundColor={"transparent"} marginLeft={8}
                         iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "JUMP_FORWARD", payload: { interval: 15 } })}
                         color={colors.text} borderRadius={50} underlayColor={"#C7C7C7"} />
-                    <Icon.Button name={"favorite-border"} size={22} backgroundColor={"transparent"} marginLeft={8}
-                        iconStyle={{ paddingVertical: 8 }} onPress={() => dispatch({ type: "TRACK_REPRODUCTION" })}
-                        color={colors.primary} borderRadius={50} underlayColor={"#C7C7C7"} />
+                    <Icon.Button name={(player.rating ? "favorite" : "favorite-border")} size={22} backgroundColor={"transparent"} marginLeft={8}
+                        onPress={() => dispatch({ type: "ASYNC_FAVORITE_MUSIC", payload: { musicId: player.id } })}
+                        iconStyle={{ paddingVertical: 8 }} color={colors.primary} borderRadius={50} underlayColor={"#C7C7C7"} />
                 </View>
             </View>
         </View>
