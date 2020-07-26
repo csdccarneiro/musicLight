@@ -17,10 +17,10 @@ function ItemList({ item, backgroundSelected, colorText, widthItem,
     return (
         <TouchableOpacity onPress={() => onItemPress(item)} 
             style={{ ...styles.button, width: widthItem, backgroundColor: (selected ? backgroundSelected : null) }} 
-            onLongPress={() => onSelect(item)}>
+            onLongPress={() => (onSelect ? onSelect(item) : null)}>
             <Image source={{ uri: item.cover }} style={styles.image} />
             <TouchableOpacity style={styles.containerText} 
-                onLongPress={() => optionsVisible(item)}>
+                onLongPress={() => (optionsVisible ? optionsVisible(item) : null)}>
                 <Text numberOfLines={1} style={{ ...styles.title, color: (!selected ? colorText : "white") }}>{item.fileName}</Text>
                 <Text numberOfLines={1} style={{ ...styles.subtitle, color: (!selected ? colorText : "white") }}>{item.title}</Text>
             </TouchableOpacity>

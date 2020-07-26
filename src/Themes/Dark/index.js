@@ -1,7 +1,7 @@
 export default {
     dark: true,
     colors: {
-        background: "#010101", 
+        background: "#272729", 
         border: "#272729", 
         card: "#121212", 
         primary: "#F89424", 
