@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.wenkesj.voice.VoicePackage;
 import com.guichaguri.trackplayer.TrackPlayer;
 import com.cinder92.musicfiles.RNReactNativeGetMusicFilesPackage;
 import com.RNFetchBlob.RNFetchBlobPackage;

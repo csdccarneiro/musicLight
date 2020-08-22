@@ -57,7 +57,8 @@ const styles = StyleSheet.create({
         textAlign: "center", 
         paddingHorizontal: 20, 
         fontFamily: "sans-serif-medium",
-        paddingVertical: 15, 
+        paddingTop: 15,
+        paddingBottom: 5, 
         fontWeight: "bold"
     },
     textModalOptions: {
