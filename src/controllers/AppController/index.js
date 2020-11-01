@@ -1,7 +1,6 @@
 import React from 'react';
 import { PermissionsAndroid, BackHandler, Dimensions, ToastAndroid } from 'react-native';
 import MusicFiles from "react-native-get-music-files";
-import RNFetchBlob from 'rn-fetch-blob';
 import Share from "react-native-share";
 
 class AppController {
@@ -26,23 +25,6 @@ class AppController {
         .then(() => ToastAndroid.show("Compartilhado com sucesso!", ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50))
         .catch(() => ToastAndroid.show("Não foi possível a compartilhar.", ToastAndroid.LONG, ToastAndroid.BOTTOM, 25, 50));
     
-    }
-
-    async deleteFile(localListMusic: Array, itemsSelected: Array) {
-        
-        let promiseFiles = await Promise.all(itemsSelected.map(item => RNFetchBlob.fs.unlink(item.path)));
-
-        let mapItems = new Map();
-
-        let idsTracks = itemsSelected.map(item => { mapItems.set(item.id, true); return item.id; });
-
-        let newListMusic = localListMusic.filter(item => { 
-            if (!mapItems.has(item.id))
-                return item;
-        });
-
-        return { ids: idsTracks, newListMusic };
-
     }
 
     addFavorite(localListMusic: Array, musicId: String) {

@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import { View, Image, Text, StyleSheet } from 'react-native';
+import { View, Image, Text, StyleSheet, Picker } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
 import { useTheme } from '@react-navigation/native';
@@ -17,13 +17,36 @@ function Player({ navigation, player, dispatch }) {
         .join(":").replace(/\b(\d)\b/g, "0$1")
     }
 
+    function optionsSelect(value) {
+        switch (value) {
+            case "share":
+                dispatch({ type: "SHARE_FILE", payload: { items: [player] } });
+            break;
+            case "details":
+                const { icon, path, rating, title, artist, album, author } = player;
+                navigation.navigate("Modal", { screen: "Details", params: { item: { path, rating, album, author, 
+                fileName: title, cover: icon } } });
+            break;
+            default:
+            break;
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.containerOptions}>
                 <Icon.Button name={"expand-more"} size={25} color={colors.text} underlayColor={"#B7B6B6"}
                     backgroundColor={"transparent"} onPress={() => navigation.goBack()} iconStyle={{ marginRight: 2 }} />
-                <Icon.Button name={"more-vert"} size={25} color={colors.text} backgroundColor={"transparent"}
-                    underlayColor={"#B7B6B6"} onPress={() => navigation.goBack()} iconStyle={{ marginRight: 0 }} />
+                <View style={{ flexDirection: "row" }}>
+                    <Icon.Button name={"more-vert"} size={25} color={colors.text} backgroundColor={"transparent"}
+                    underlayColor={"#B7B6B6"} onPress={() => console.log("Menu")} iconStyle={{ marginRight: 0 }} >
+                        <Picker style={styles.picker} onValueChange={optionsSelect} mode={"dropdown"}> 
+                            <Picker.Item label="Opções                             "  color={colors.primary} style={{ backgroundColor: "pink" }} />
+                            <Picker.Item label="  Compartilhar" value="share" />
+                            <Picker.Item label="  Detalhes" value="details" />
+                        </Picker>
+                    </Icon.Button>
+                </View>
             </View>
             <View style={styles.containerTrackInfo}>
                 <Image source={{ uri: player.icon }} style={styles.image} />
@@ -84,6 +107,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 5, 
         paddingVertical: 5
     },  
+    picker: {
+        width: 50,
+        right: -3,
+        position: "absolute",
+        backgroundColor: "transparent"
+    },
     containerTrackInfo: {
         justifyContent: "space-evenly", 
         flex: 1, 

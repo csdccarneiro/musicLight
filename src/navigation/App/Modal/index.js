@@ -13,7 +13,7 @@ function Modal({ navigation }) {
 
     return (
         <View style={style.container}>
-            <View style={style.background} onStartShouldSetResponder={() => navigation.navigate("Home")} />
+            <View style={style.background} onStartShouldSetResponder={() => navigation.goBack()} />
             <View style={style.containerModal}>
                 <ModalStack.Navigator screenOptions={{ headerShown: false, contentStyle: style.modal }}>
                     <ModalStack.Screen name={"Options"} component={Options} />
@@ -38,7 +38,7 @@ const style = StyleSheet.create({
     },
     containerModal: {
         position: "absolute", 
-        height: "50%", 
+        height: "30%", 
         width: "90%", 
         alignSelf: "center"
     },  

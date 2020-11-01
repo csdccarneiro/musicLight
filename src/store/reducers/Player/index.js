@@ -8,6 +8,9 @@ const DATA_INITIAL_PLAYER = {
     duration: 0,
     position: 0,
     play: false,
+    path: null,
+    album: null,
+    author: null,
     rating: false,
     volume: true,
     velocity: 0,
@@ -28,9 +31,8 @@ const Player = (state = DATA_INITIAL_PLAYER, action) => {
             return state;
         break;
         case "TRACK_CHANGE":
-            return { ...state, id: action.payload.id, title: action.payload.title, 
-                subtitle: action.payload.artist, icon: action.payload.artwork,
-                rating: action.payload.rating };
+            const { id, title, artist, artwork, rating, url, author, album } = action.payload;
+            return { ...state, id, title, rating, author, album, subtitle: artist, icon: artwork, path: url };
         break;
         case "TOGGLE_PLAY_PAUSE":
             controllers.MusicController.togglePlayAndPause();
@@ -48,8 +50,8 @@ const Player = (state = DATA_INITIAL_PLAYER, action) => {
             return state;
         break;
         case "TRACK_PROGRESS":
-            return { ...state, position: action.payload.position, 
-                duration: action.payload.duration };
+            const { position, duration } = action.payload;
+            return { ...state, position, duration };
         break;
         case "TRACK_SEEK":
             controllers.MusicController.seekTrack(action.payload.sliderProgress);

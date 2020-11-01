@@ -21,20 +21,8 @@ function Options({ route, navigation }) {
                 dispatch({ type: "SHARE_FILE", payload: { items: [item] } });
                 navigation.navigate("Home");
             break;
-            case "FAVORITE":
-                dispatch({ type: "ASYNC_FAVORITE_MUSIC", payload: { musicId: item.id } });
-                navigation.navigate("Home");
-            break;
-            case "DELETE":
-                dispatch({ type: "ASYNC_DELETE_FILE", payload: { localListMusic: app.localListMusic, items: [item] } });
-                navigation.navigate("Home");
-            break;
-            case "DETAILS":
-                navigation.navigate("Modal", { screen: "Details", params: { item } });
-            break;
             default: break;
         }
-
     });
 
     return (
@@ -43,9 +31,6 @@ function Options({ route, navigation }) {
             <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("REPRODUCTION")}><Text style={styles.textModalOptions}>Reproduzir</Text></TouchableHighlight>
             <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("ADD_PLAYLIST")}><Text style={styles.textModalOptions}>Adicionar a playlist</Text></TouchableHighlight>
             <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("SHARE")}><Text style={styles.textModalOptions}>Compartilhar</Text></TouchableHighlight>
-            <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("FAVORITE")}><Text style={styles.textModalOptions}>{(item.rating ? "Desfavoritar" : "Favoritar") }</Text></TouchableHighlight>
-            <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("DELETE")}><Text style={styles.textModalOptions}>Excluir</Text></TouchableHighlight>
-            <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("DETAILS")}><Text style={styles.textModalOptions}>Detalhes</Text></TouchableHighlight>
         </>
     );
 

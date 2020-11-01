@@ -66,7 +66,9 @@ class MusicController {
                     title: music.fileName,
                     artist: music.title,
                     rating: music.rating,
-                    artwork: music.cover
+                    artwork: music.cover,
+                    album: music.album,
+                    author: music.author
                 }));
 
                 TrackPlayer.updateOptions({

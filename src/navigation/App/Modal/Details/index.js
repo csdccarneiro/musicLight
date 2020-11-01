@@ -8,26 +8,28 @@ function Details({ route }) {
     return (
         <View style={styles.container}>
             <Image source={{ uri: item.cover }} style={styles.iconDetail} />
-            <Text numberOfLines={2} style={styles.containerLine}>
-                <Text style={styles.titleDetail}>Título: </Text> 
-                <Text>{item.fileName}</Text> 
-            </Text>
-            <Text numberOfLines={2} style={styles.containerLine}>
-                <Text style={styles.titleDetail}>Album: </Text> 
-                <Text>{item.album}</Text> 
-            </Text>
-            <Text numberOfLines={2} style={styles.containerLine}>
-                <Text style={styles.titleDetail}>Autor: </Text> 
-                <Text>{item.author}</Text> 
-            </Text>
-            <Text style={styles.containerLine}>
-                <Text style={styles.titleDetail}>Favorito: </Text> 
-                <Text>{(item.rating ? "Sim" : "Não")}</Text> 
-            </Text>
-            <Text numberOfLines={3} style={styles.containerLine}>
-                <Text style={styles.titleDetail}>Caminho: </Text>
-                <Text>{item.path}</Text>
-            </Text>
+            <View style={{ flex: 1, justifyContent: "space-evenly" }}>
+                <Text numberOfLines={2} style={styles.containerLine}>
+                    <Text style={styles.titleDetail}>Título: </Text> 
+                    <Text>{item.fileName}</Text> 
+                </Text>
+                <Text numberOfLines={2} style={styles.containerLine}>
+                    <Text style={styles.titleDetail}>Album: </Text> 
+                    <Text>{item.album}</Text> 
+                </Text>
+                <Text numberOfLines={2} style={styles.containerLine}>
+                    <Text style={styles.titleDetail}>Autor: </Text> 
+                    <Text>{item.author}</Text> 
+                </Text>
+                <Text style={styles.containerLine}>
+                    <Text style={styles.titleDetail}>Favorito: </Text> 
+                    <Text>{(item.rating ? "Sim" : "Não")}</Text> 
+                </Text>
+                <Text numberOfLines={3} style={styles.containerLine}>
+                    <Text style={styles.titleDetail}>Caminho: </Text>
+                    <Text>{item.path}</Text>
+                </Text>
+            </View>
         </View> 
     );
 
@@ -36,19 +38,20 @@ function Details({ route }) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20, 
-        paddingVertical: 20,
+        flexDirection: "row",
+        paddingVertical: 15,
+        paddingHorizontal: 10,
         justifyContent: "space-between"
     },
     iconDetail: {
         width: 100, 
         height: 100, 
         alignSelf: "center", 
-        marginBottom: 10
+        marginBottom: 10,
+        marginRight: 10
     },
     containerLine: {
-        fontSize: 15, 
-        paddingTop: 10
+        fontSize: 15
     },
     titleDetail: {
         fontWeight: "bold"

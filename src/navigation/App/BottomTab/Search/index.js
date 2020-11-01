@@ -1,6 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, TextInput, FlatList, StyleSheet, Text } from 'react-native';
-import Voice from '@react-native-community/voice';
 import { connect } from 'react-redux';
 import { useTheme } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -10,15 +9,7 @@ function Search({ app, dispatch, navigation }) {
 
     const [ searchList, setSearchList ] = useState([]);
     const [ searchValue, setSearchValue ] = useState(null);
-    const [ voiceStart, setVoiceStart ] = useState(false);
     const { colors } = useTheme();
-
-    useEffect(() => {
-        Voice.onSpeechStart = () => setVoiceStart(true);
-        Voice.onSpeechEnd = () => setVoiceStart(false);
-        Voice.onSpeechError = () => setVoiceStart(false);
-        Voice.onSpeechResults = (e) => searchMusic(e.value[0]);
-    }, []);
 
     const searchMusic = useCallback(text => {
         let search = (text && typeof text != "object" ? text : null);
@@ -32,10 +23,6 @@ function Search({ app, dispatch, navigation }) {
         dispatch({ type: "TRACK_SELECT", payload: { musicId: item.id } });
         navigation.navigate("Player");
     }, []);
-
-    async function onStartButtonPress() {
-        await Voice.start("pt_BR");
-    }
 
     function renderItems({ item }) {
         return (
@@ -52,13 +39,10 @@ function Search({ app, dispatch, navigation }) {
     return (
         <View style={styles.container}>
             <View style={{ ...styles.containerSearch, backgroundColor: colors.background }}>
-                <Icon name={"search"} size={25} style={{ paddingTop: 5 }} color={colors.text} backgroundColor={"transparent"} />
                 <TextInput placeholder={"Pesquise uma música..."} style={{ ...styles.inputSearch, color: colors.text }}
                     placeholderTextColor={"#C7C7C7"} onChangeText={searchMusic} value={searchValue} autoFocus={true} />   
-                <Icon.Button name={(searchValue ? "clear" : null)} size={25} underlayColor={'#C7C7C7'} color={colors.text}
+                <Icon.Button name={(searchValue ? "clear" : "search")} size={25} underlayColor={'#C7C7C7'} color={colors.text}
                     onPress={searchMusic} style={styles.inputRightOptions} backgroundColor={"transparent"} />
-                <Icon.Button name={"keyboard-voice"} style={styles.inputRightOptions} size={25} underlayColor={'#C7C7C7'}
-                    color={(voiceStart ? "#F10000" : colors.text)} backgroundColor={"transparent"} onPress={onStartButtonPress} />
             </View>
             <FlatList 
                 data={searchList}
@@ -83,9 +67,9 @@ const styles = StyleSheet.create({
     containerSearch: {
         marginTop: -3, 
         elevation: 10, 
-        height: 60, 
-        paddingLeft: 13,
-        paddingRight: 10, 
+        paddingLeft: 10,
+        paddingRight: 5,
+        height: 60,  
         borderBottomWidth: 0.1,
         flexDirection: "row", 
         alignItems: "center"
@@ -99,8 +83,7 @@ const styles = StyleSheet.create({
         paddingTop: 10
     },
     inputSearch: {
-        flex: 1, 
-        paddingLeft: 15, 
+        flex: 1,  
         fontSize: 17,
         paddingBottom: 8
     },
