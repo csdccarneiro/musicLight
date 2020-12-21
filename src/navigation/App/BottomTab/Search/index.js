@@ -14,9 +14,11 @@ function Search({ app, dispatch, navigation }) {
     const searchMusic = useCallback(text => {
         let search = (text && typeof text != "object" ? text : null);
         let regex = new RegExp(search, "i");
-        let newList = app.localListMusic.filter(item => (regex.test(item.fileName) || regex.test(item.title) ? item : null));
+        if (Boolean(app.localListMusic)) {
+            let newList = app.localListMusic.filter(item => (regex.test(item.fileName) || regex.test(item.title) ? item : null));
+            setSearchList(newList);
+        }   
         setSearchValue(search);
-        setSearchList(newList);
     }, [searchValue]);
 
     const onItemPress = useCallback(item => {
@@ -47,7 +49,7 @@ function Search({ app, dispatch, navigation }) {
             <FlatList 
                 data={searchList}
                 columnWrapperStyle={styles.listContent}
-                ListEmptyComponent={<Text style={{ ...styles.textEmpty, color: colors.text }}>Nenhuma música no momento...</Text>}
+                ListEmptyComponent={<Text style={{ ...styles.textEmpty, color: colors.text }}>Pesquise uma música...</Text>}
                 initialNumToRender={5}
                 numColumns={2}
                 extraData={searchValue}

@@ -8,14 +8,10 @@ function Options({ route, navigation }) {
     const dispatch = useDispatch();
 
     const executeOptions = useCallback(action => {
-
         switch (action) {
             case "REPRODUCTION":
                 dispatch({ type: "TRACK_SELECT", payload: { musicId: item.id } });
                 navigation.navigate("Home");
-            break;
-            case "ADD_PLAYLIST":
-                navigation.navigate("Modal", { screen: "Playlist", params: { playList: app.playList, item } });
             break;
             case "SHARE":
                 dispatch({ type: "SHARE_FILE", payload: { items: [item] } });
@@ -29,7 +25,6 @@ function Options({ route, navigation }) {
         <>
             <Text numberOfLines={2} style={styles.titleModal}>{item.fileName}</Text>
             <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("REPRODUCTION")}><Text style={styles.textModalOptions}>Reproduzir</Text></TouchableHighlight>
-            <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("ADD_PLAYLIST")}><Text style={styles.textModalOptions}>Adicionar a playlist</Text></TouchableHighlight>
             <TouchableHighlight underlayColor={'#C7C7C7'} onPress={() => executeOptions("SHARE")}><Text style={styles.textModalOptions}>Compartilhar</Text></TouchableHighlight>
         </>
     );

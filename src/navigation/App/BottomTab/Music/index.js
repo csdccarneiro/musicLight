@@ -53,7 +53,6 @@ function Music ({ app, dispatch, navigation }) {
     }
 
     function topOptionsItems() {
-
         return (
             <View style={{ ...styles.containerSelectOptions, display: (selected.size > 0 ? "flex" : "none"), 
                 backgroundColor: colors.primary }}>
@@ -62,23 +61,25 @@ function Music ({ app, dispatch, navigation }) {
                 <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>{selected.size}</Text>
                 <Icon.Button onPress={() => dispatch({ type: "SHARE_FILE", payload: { items: getMultiItemsSelected(selected) } })}
                     name={"share"} size={30} color={"white"} style={styles.iconItemSelected} backgroundColor={"transparent"} />
-                <Icon.Button onPress={() => navigation.navigate("Modal", { screen: 'Playlist', 
-                    params: { playList: app.playList, item: getMultiItemsSelected(selected) } })} color={"white"} 
-                    name={"add"} size={30} style={styles.iconItemSelected} backgroundColor={"transparent"} />
             </View>
         );
-
     }
 
     return (
-        <View>
+        <View style={styles.container}>
             <FlatList
                 data={app.localListMusic}
                 initialNumToRender={5}
                 columnWrapperStyle={styles.listContent}
                 ListHeaderComponent={topOptionsItems}
                 stickyHeaderIndices={[0]}
-                ListEmptyComponent={<ActivityIndicator size={"large"} color={colors.primary} />}
+                ListEmptyComponent={
+                    (Boolean(app.localListMusic) ?
+                        <ActivityIndicator size={"large"} color={colors.primary} />
+                    :
+                        <Text style={{ ...styles.textEmpty, color: colors.text }}>Nenhuma música encontrada...</Text>
+                    )
+                }
                 numColumns={2}
                 extraData={selected}
                 renderItem={renderItems}
@@ -91,10 +92,27 @@ function Music ({ app, dispatch, navigation }) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    containerButtonBottom: {
+        position: "absolute", 
+        zIndex: 99, 
+        bottom: 10, 
+        right: 10
+    },
+    buttonAdd: {
+        padding: 15, 
+        marginRight: -10
+    },
     listContent: {
         justifyContent: "space-between", 
         paddingTop: 10,
         paddingHorizontal: 25
+    },
+    textEmpty: {
+        textAlign: "center", 
+        paddingTop: 10
     },
     containerSelectOptions: {
         width: '100%',  

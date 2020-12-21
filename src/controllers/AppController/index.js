@@ -52,11 +52,12 @@ class AppController {
 
         let widthItems = (Dimensions.get("window").width / 2) * 0.8;
 
-        if (appState.localListMusic.length != localListMusic.length) {
+        if (Array.isArray(localListMusic) && (appState.localListMusic.length != localListMusic.length)) {
             
             let trackIds = new Map();
 
-            appState.localListMusic.map(track => trackIds.set(track.id, true));
+            if(Boolean(appState.localListMusic))
+                appState.localListMusic.map(track => trackIds.set(track.id, true));
 
             let trackNoList = localListMusic.filter(track => {
                 if(!trackIds.has(track.id)) {
@@ -70,11 +71,13 @@ class AppController {
                 }
             });
 
-            localListMusic = appState.localListMusic.concat(trackNoList);
-            
-            return { localListMusic, widthItems };
-            
+            localListMusic = (Boolean(appState.localListMusic) ? appState.localListMusic.concat(trackNoList) : trackNoList);
+        
         }
+        else
+            localListMusic = false;
+    
+        return { localListMusic, widthItems };
 
     }
     

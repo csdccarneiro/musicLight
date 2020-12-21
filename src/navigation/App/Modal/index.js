@@ -5,7 +5,6 @@ import { createNativeStackNavigator } from 'react-native-screens/native-stack';
 //PAGES MODAL
 import Options from "./Options";
 import Details from "./Details";
-import Playlist from "./Playlist";
 
 const ModalStack = createNativeStackNavigator();
 
@@ -18,7 +17,6 @@ function Modal({ navigation }) {
                 <ModalStack.Navigator screenOptions={{ headerShown: false, contentStyle: style.modal }}>
                     <ModalStack.Screen name={"Options"} component={Options} />
                     <ModalStack.Screen name={"Details"} component={Details} />
-                    <ModalStack.Screen name={"Playlist"} component={Playlist} />
                 </ModalStack.Navigator>
             </View>
         </View>

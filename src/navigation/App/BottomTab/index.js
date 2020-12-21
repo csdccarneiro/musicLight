@@ -5,7 +5,6 @@ import { MiniPlayer } from '../../../components';
 
 //PAGES
 import Music from './Music';
-import Playlist from './Playlist';
 import Search from './Search';
 import Settings from './Settings';
 
@@ -25,7 +24,6 @@ function BottomTab() {
     
     const iconMusic = ({ color }) => <Icon name={"headset"} color={color} size={22} />;
     const iconSearch = ({ color }) => <Icon name={"search"} color={color} size={27} />;
-    const iconPlaylist = ({ color }) => <Icon name={"view-list"} color={color} size={30} />;
     const iconSettings = ({ color }) => <Icon name={"settings"} color={color} size={22} />;
     
     return (
@@ -33,7 +31,6 @@ function BottomTab() {
             tabBarOptions={{ inactiveTintColor: 'gray', tabStyle: { paddingBottom: 3 } }} >
             <Tab.Screen name={"Musicas"} component={Music} options={{ tabBarIcon: iconMusic }} />
             <Tab.Screen name={"Pesquisar"} component={Search} options={{ tabBarIcon: iconSearch }} />
-            <Tab.Screen name={"Playlist"} component={Playlist} options={{ tabBarIcon: iconPlaylist }} />
             <Tab.Screen name={"Configurações"} component={Settings} options={{ tabBarIcon: iconSettings }} />
         </Tab.Navigator>
     );
