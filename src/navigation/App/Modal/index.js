@@ -35,13 +35,12 @@ const style = StyleSheet.create({
         opacity: 0.5
     },
     containerModal: {
-        position: "absolute", 
+        position: "absolute",
         height: "30%", 
         width: "90%", 
         alignSelf: "center"
     },  
     modal: {       
-        justifyContent: "space-between",
         backgroundColor: "white"
     }
 });
