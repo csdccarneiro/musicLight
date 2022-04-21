@@ -1,19 +1,22 @@
 import React from 'react';
 import { PermissionsAndroid, BackHandler, Dimensions, ToastAndroid } from 'react-native';
-import MusicFiles from "react-native-get-music-files";
+import { RNAndroidAudioStore } from "react-native-get-music-files";
 import Share from "react-native-share";
 
 class AppController {
 
     async verifyOrSendPermission(appState) {
         
-        const check = await PermissionsAndroid.check(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
-        const response = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE);
-
-        if (check === PermissionsAndroid.RESULTS.GRANTED || response === PermissionsAndroid.RESULTS.GRANTED)
-            return await this.getMusics(appState);
-        else 
-            BackHandler.exitApp();
+        const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        ]);
+            
+        if((granted["android.permission.READ_EXTERNAL_STORAGE"] && 
+            granted["android.permission.WRITE_EXTERNAL_STORAGE"]) === PermissionsAndroid.RESULTS.GRANTED)
+           return await this.getMusics(appState);
+        else
+           BackHandler.exitApp();
     
     }    
 
@@ -39,25 +42,25 @@ class AppController {
 
     async getMusics(appState) {
 
-        let localListMusic = await MusicFiles.getAll({
-            artist: true,
-            duration: true,
+        let localListMusic = await RNAndroidAudioStore.getAll({
             id: true,
-            cover: true,
-            path: true,
+            artist: true,
+            duration: true, 
             title: true,
-            minimumSongDuration : 1000, 
-            fields: ['title','artwork','duration','artist','genre','lyrics','albumTitle']
+            cover: true,
+            fileName: true,
+            path: true,
+            minimumSongDuration: (appState.minimumMusicDuration * 60000)
         });
 
         let widthItems = (Dimensions.get("window").width / 2) * 0.8;
 
-        if (Array.isArray(localListMusic) && (appState.localListMusic.length != localListMusic.length)) {
+        if (appState.localListMusic.length != localListMusic.length) {
             
             let trackIds = new Map();
 
             if(Boolean(appState.localListMusic))
-                appState.localListMusic.map(track => trackIds.set(track.id, true));
+               appState.localListMusic.map(track => trackIds.set(track.id, true));
 
             let trackNoList = localListMusic.filter(track => {
                 if(!trackIds.has(track.id)) {
@@ -71,11 +74,11 @@ class AppController {
                 }
             });
 
-            localListMusic = (Boolean(appState.localListMusic) ? appState.localListMusic.concat(trackNoList) : trackNoList);
+            localListMusic = appState.localListMusic.concat(trackNoList);
         
         }
-        else
-            localListMusic = false;
+        else 
+            localListMusic = appState.localListMusic;
     
         return { localListMusic, widthItems };
 

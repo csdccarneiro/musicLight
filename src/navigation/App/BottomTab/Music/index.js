@@ -73,13 +73,7 @@ function Music ({ app, dispatch, navigation }) {
                 columnWrapperStyle={styles.listContent}
                 ListHeaderComponent={topOptionsItems}
                 stickyHeaderIndices={[0]}
-                ListEmptyComponent={
-                    (Boolean(app.localListMusic) ?
-                        <ActivityIndicator size={"large"} color={colors.primary} />
-                    :
-                        <Text style={{ ...styles.textEmpty, color: colors.text }}>Nenhuma música encontrada...</Text>
-                    )
-                }
+                ListEmptyComponent={<ActivityIndicator size={"large"} color={colors.primary} />}
                 numColumns={2}
                 extraData={selected}
                 renderItem={renderItems}
