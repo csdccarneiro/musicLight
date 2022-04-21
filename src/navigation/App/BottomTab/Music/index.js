@@ -60,7 +60,8 @@ function Music ({ app, dispatch, navigation }) {
                     backgroundColor={"transparent"} color={"white"} onPress={() => onSelect(app.localListMusic)} />
                 <Text style={{ color: "white", fontSize: 20, fontWeight: "bold" }}>{selected.size}</Text>
                 <Icon.Button onPress={() => dispatch({ type: "SHARE_FILE", payload: { items: getMultiItemsSelected(selected) } })}
-                    name={"share"} size={30} color={"white"} style={styles.iconItemSelected} backgroundColor={"transparent"} />
+                    name={"share"} size={30} color={"white"} style={styles.iconItemSelected} backgroundColor={"transparent"}
+                    underlayColor={'#C7C7C7'} />
             </View>
         );
     }

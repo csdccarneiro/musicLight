@@ -50,29 +50,26 @@ class AppController {
             cover: true,
             fileName: true,
             path: true,
-            minimumSongDuration: (appState.minimumMusicDuration * 60000)
+            minimumSongDuration: 60000
         });
 
         let widthItems = (Dimensions.get("window").width / 2) * 0.8;
 
         if (appState.localListMusic.length != localListMusic.length) {
             
-            let trackIds = new Map();
+            let trackIds = appState.localListMusic.map(track => track.id);
 
-            if(Boolean(appState.localListMusic))
-               appState.localListMusic.map(track => trackIds.set(track.id, true));
+            let trackNoList = localListMusic.filter(track => !trackIds.includes(track.id));
 
-            let trackNoList = localListMusic.filter(track => {
-                if(!trackIds.has(track.id)) {
-                    track.fileName = track.fileName.replace(/\.[^/.]+$/, "");
-                    track.title = (track.title ? track.title : "Artista desconhecido");
-                    track.album = (track.album ? track.album : "Album desconhecido");
-                    track.author = (track.author ? track.author : "Autor desconhecido");
-                    track.rating = false;
-                    track.cover = (track.cover ? track.cover : appState.icon_music);
-                    return track;
-                }
-            });
+            trackNoList = trackNoList.map(track => ({ 
+                ...track,  
+                fileName: track.fileName.replace(/\.[^/.]+$/, ""),
+                title: (track.title ? track.title : "Artista desconhecido"),
+                album: (track.album ? track.album : "Album desconhecido"),
+                author: (track.author ? track.author : "Autor desconhecido"),
+                rating: false,
+                cover: (track.cover ? track.cover : appState.icon_music)
+            }))
 
             localListMusic = appState.localListMusic.concat(trackNoList);
         

@@ -16,8 +16,8 @@ const Stack = createNativeStackNavigator();
 function AppContainer({ app, dispatch }) {
 
     useEffect(() => {
-        const { localListMusic, icon_music, minimumMusicDuration } = app; 
-        dispatch({ type: "ASYNC_GET_MUSICS", payload: { localListMusic, icon_music, minimumMusicDuration } });
+        const { localListMusic, icon_music } = app; 
+        dispatch({ type: "ASYNC_GET_MUSICS", payload: { localListMusic, icon_music } });
     }, []);
     
     return (
